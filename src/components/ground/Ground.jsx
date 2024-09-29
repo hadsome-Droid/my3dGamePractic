@@ -10,27 +10,27 @@ import {CylinderCollider, RigidBody} from "@react-three/rapier";
 
 export const Ground = () => {
 
-    return (
-        <RigidBody color={false} type={'fixed'} position-y={-0.5} friction={2}>
-            <CylinderCollider args={[1 / 2, 5]}/>
-            <Cylinder scale={[5, 1, 5]} receiveShadow={true}>
-                <meshStandardMaterial color={'white'}/>
-            </Cylinder>
-        </RigidBody>
-    )
-    // const texture = useTexture(floorTexture);
-    // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    // texture.repeat.set(100, 100);
-    // texture.needsUpdate = true;
-    //
-    // console.log(texture);
     // return (
-    //     <RigidBody type={'fixed'}>
-    //         <mesh position={[0, -5, 0]} rotation-x={-Math.PI / 2}>
-    //             <planeGeometry args={[500, 500]}/>
-    //             <meshStandardMaterial color="grey" map={texture}/>
-    //         </mesh>
+    //     <RigidBody color={false} type={'fixed'} position-y={-0.5} friction={2}>
+    //         <CylinderCollider args={[1 / 2, 5]}/>
+    //         <Cylinder scale={[5, 1, 5]} receiveShadow={true}>
+    //             <meshStandardMaterial color={'white'}/>
+    //         </Cylinder>
     //     </RigidBody>
-    //
-    // );
+    // )
+    const texture = useTexture(floorTexture);
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(100, 100);
+    texture.needsUpdate = true;
+
+    // console.log(texture);
+    return (
+        <RigidBody type={'fixed'} friction={2}>
+            <mesh position={[0, 0, 0]} rotation-x={-Math.PI / 2}>
+                <planeGeometry args={[500, 500]}/>
+                <meshStandardMaterial color="grey" map={texture}/>
+            </mesh>
+        </RigidBody>
+
+    );
 }

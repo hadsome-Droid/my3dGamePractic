@@ -27,17 +27,17 @@ function App() {
     );
     return (
         <KeyboardControls map={map}>
-            <div id="container">
-                <div className="aim"></div>
-                <Canvas shadows camera={{position: [0, 30, 0], fov: 30}}>
-                    <color attach="background" args={["#ececec"]}/>
-                    <Suspense>
-                        <Physics debug={true}>
-                            <Experience/>
-                        </Physics>
-                    </Suspense>
-                </Canvas>
-            </div>
+            {/*<div id="container">*/}
+            {/*    <div className="aim"></div>*/}
+            <Canvas shadows camera={{position: [0, 6, 14], fov: 42}}>
+                <color attach="background" args={["#ececec"]}/>
+                <Suspense>
+                    <Physics debug={true}>
+                        <Experience/>
+                    </Physics>
+                </Suspense>
+            </Canvas>
+            {/*</div>*/}
         </KeyboardControls>
 
     );
