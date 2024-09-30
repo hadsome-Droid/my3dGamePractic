@@ -4,6 +4,7 @@ import "./index.css";
 import {Suspense, useMemo} from "react";
 import {Physics} from "@react-three/rapier";
 import {KeyboardControls} from "@react-three/drei";
+import {Bloom, EffectComposer} from "@react-three/postprocessing";
 
 export const Controls = {
     forward: "forward",
@@ -38,6 +39,9 @@ function App() {
                         <Experience/>
                     </Physics>
                 </Suspense>
+                <EffectComposer disableNormalPass>
+                    <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur/>
+                </EffectComposer>
             </Canvas>
             {/*</div>*/}
         </KeyboardControls>

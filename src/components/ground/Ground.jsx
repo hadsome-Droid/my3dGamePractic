@@ -25,7 +25,7 @@ export const Ground = () => {
 
     // console.log(texture);
     return (
-        <RigidBody type={'fixed'} friction={2}>
+        <RigidBody type={'fixed'} friction={2} colliders={'trimesh'}>
             <mesh position={[0, 0, 0]} rotation-x={-Math.PI / 2}>
                 <planeGeometry args={[500, 500]}/>
                 <meshStandardMaterial color="grey" map={texture}/>

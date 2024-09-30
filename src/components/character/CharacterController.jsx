@@ -1,4 +1,4 @@
-import {CapsuleCollider, RigidBody} from "@react-three/rapier";
+import {CapsuleCollider, RigidBody, vec3} from "@react-three/rapier";
 import {SkeletonMage} from "./SkeletonMage.jsx";
 import {useEffect, useRef} from "react";
 import {Controls} from "../../App.jsx";
@@ -11,9 +11,9 @@ const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
 const MAX_VEL = 3;
 const RUN_VEL = 1.5
-const BULLET_SPEED = 20
+const BULLET_SPEED = 8
 
-export const CharacterController = () => {
+export const CharacterController = ({onFire, ...props}) => {
         const characterState = useGameStore((state) => state.characterState)
         const setCharacterState = useGameStore((state) => state.setCharacterState)
 
@@ -35,27 +35,40 @@ export const CharacterController = () => {
 
         const shoot = () => {
             // Get the character's rotation
-            const rotation = character.current.rotation;
+            const rotation = character.current?.rotation;
+            // const rotation = rigidBody.current?.translation();
 
             // Calculate the direction vector
             const direction = new THREE.Vector3(0, 0, -1);
             direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
 
             // Spawn the bullet at the character's position
-            const bulletPosition = character.current.position.clone();
+            // const bulletPosition = character.current?.position.clone();
+
+            const bulletPosition = vec3(rigidBody.current?.translation());
 
             // Set the bullet's velocity based on the direction vector
             const bulletVelocity = direction.multiplyScalar(BULLET_SPEED);
 
+
+            const newBullet = {
+                position: bulletPosition,
+                angle: bulletVelocity
+            }
+
+            console.log(bulletPosition)
+
+            onFire(newBullet);
             // Spawn the bullet with the calculated position and velocity
             // spawnBullet(bulletPosition, bulletVelocity);
         };
-
+        // shoot()
         useEffect(() => {
             const handleMouseDown = (event) => {
                 if (event.button === 0) {
                     // Left mouse button was pressed
                     isLeftMouseDown.current = true;
+                    shoot()
                     setCharacterState('Spellcast_Shoot');
                 }
                 // else if (event.button === 2) {
@@ -158,7 +171,7 @@ export const CharacterController = () => {
             state.camera.lookAt(targetLookAt);
         })
 
-        console.log(shiftPressed);
+        // console.log(shiftPressed);
 
         return (
 

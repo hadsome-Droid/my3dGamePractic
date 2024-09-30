@@ -123,7 +123,7 @@ export function SkeletonMage(props) {
     }, [characterState, actions])
 
     return (
-        <group ref={group} {...props} dispose={null}>
+        <group ref={group} {...props} dispose={null} >
             <group name="Root_Scene">
                 <group name="RootNode">
                     <group name="Rig" scale={100}>
