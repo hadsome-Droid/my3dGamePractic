@@ -11,6 +11,7 @@ export const Controls = {
     left: "left",
     right: "right",
     jump: "jump",
+    shift: "shift",
 };
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             {name: Controls.left, keys: ["ArrowLeft", "KeyA"]},
             {name: Controls.right, keys: ["ArrowRight", "KeyD"]},
             {name: Controls.jump, keys: ["Space"]},
+            {name: Controls.shift, keys: ["Shift"]},
         ],
         []
     );
@@ -32,7 +34,7 @@ function App() {
             <Canvas shadows camera={{position: [0, 6, 14], fov: 42}}>
                 <color attach="background" args={["#ececec"]}/>
                 <Suspense>
-                    <Physics debug={true}>
+                    <Physics>
                         <Experience/>
                     </Physics>
                 </Suspense>

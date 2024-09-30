@@ -11,6 +11,7 @@ const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
 const MAX_VEL = 3;
 const RUN_VEL = 1.5
+const BULLET_SPEED = 20
 
 export const CharacterController = () => {
         const characterState = useGameStore((state) => state.characterState)
@@ -20,6 +21,7 @@ export const CharacterController = () => {
         const leftPressed = useKeyboardControls((state) => state[Controls.left]);
         const rightPressed = useKeyboardControls((state) => state[Controls.right]);
         const backPressed = useKeyboardControls((state) => state[Controls.back]);
+        const shiftPressed = useKeyboardControls((state) => state[Controls.shift]);
         const forwardPressed = useKeyboardControls(
             (state) => state[Controls.forward]
         );
@@ -28,21 +30,70 @@ export const CharacterController = () => {
         const rigidBody = useRef();
         const isOnFloor = useRef(true);
 
-        useEffect(() => {
-            document.addEventListener('mousedown', () => {
-                setCharacterState('1H_Ranged_Reload')
-            })
+        const isLeftMouseDown = useRef(false);
+        const isRightMouseDown = useRef(false);
 
-            document.addEventListener('mouseup', () => {
-                setCharacterState('Idle')
-            })
-        }, [])
+        const shoot = () => {
+            // Get the character's rotation
+            const rotation = character.current.rotation;
+
+            // Calculate the direction vector
+            const direction = new THREE.Vector3(0, 0, -1);
+            direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
+
+            // Spawn the bullet at the character's position
+            const bulletPosition = character.current.position.clone();
+
+            // Set the bullet's velocity based on the direction vector
+            const bulletVelocity = direction.multiplyScalar(BULLET_SPEED);
+
+            // Spawn the bullet with the calculated position and velocity
+            // spawnBullet(bulletPosition, bulletVelocity);
+        };
+
+        useEffect(() => {
+            const handleMouseDown = (event) => {
+                if (event.button === 0) {
+                    // Left mouse button was pressed
+                    isLeftMouseDown.current = true;
+                    setCharacterState('Spellcast_Shoot');
+                }
+                // else if (event.button === 2) {
+                //     // Right mouse button was pressed
+                //     isRightMouseDown.current = true;
+                //     setCharacterState('RightMouseButton_Animation');
+                // }
+
+            };
+
+            const handleMouseUp = (event) => {
+                if (event.button === 0) {
+                    // Left mouse button was released
+                    isLeftMouseDown.current = false;
+                    setCharacterState('Idle');
+                }
+                // else if (event.button === 2) {
+                //     // Right mouse button was released
+                //     isRightMouseDown.current = false;
+                //     setCharacterState('Idle');
+                // }
+            };
+
+            document.addEventListener('mousedown', handleMouseDown);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            return () => {
+                document.removeEventListener('mousedown', handleMouseDown);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+        }, []);
 
         useFrame((state) => {
             const impulse = {x: 0, y: 0, z: 0};
             if (jumpPressed && isOnFloor.current) {
                 impulse.y += JUMP_FORCE;
                 isOnFloor.current = false;
+                setCharacterState('Jump_Full_Short');
             }
 
             const linvel = rigidBody.current.linvel();
@@ -67,23 +118,25 @@ export const CharacterController = () => {
             rigidBody.current?.applyImpulse(impulse, true);
 
             if (Math.abs(linvel.x) > RUN_VEL || Math.abs(linvel.z) > RUN_VEL) {
-                // Running_Strafe_Left
-                if (characterState !== 'Running_C') {
+                // Walking_A linvel.x !== 0 || linvel.z !== 0
+                if (shiftPressed) {
                     setCharacterState('Running_C');
+                } else {
+                    if (!isLeftMouseDown.current && !isRightMouseDown.current && isOnFloor.current) {
+                        setCharacterState('Walking_A');
+                    }
+
+                    // if(characterState !== 'Walking_A'){
+                    //     setCharacterState('Walking_A');
+                    // }
                 }
             } else {
-                if (characterState !== 'Idle') {
+                // setCharacterState('Idle');
+                if (!isLeftMouseDown.current && isOnFloor.current) {
                     setCharacterState('Idle');
                 }
             }
 
-            // if (impulse.y > 0) {
-            //     console.log('+++')
-            //     if (characterState !== 'Jump_Full_Long') {
-            //         console.log('----')
-            //         setCharacterState('Jump_Full_Long');
-            //     }
-            // }
 
             if (changeRotation) {
                 const angle = Math.atan2(linvel.x, linvel.z);
@@ -105,7 +158,7 @@ export const CharacterController = () => {
             state.camera.lookAt(targetLookAt);
         })
 
-        // console.log( characterState);
+        console.log(shiftPressed);
 
         return (
 

@@ -116,7 +116,7 @@ export function SkeletonMage(props) {
     const characterState = useGameStore((state) => state.characterState)
 
     useEffect(() => {
-        actions[characterState].reset().fadeIn(0.01).play()
+        actions[characterState].reset().play()
         return () => {
             actions[characterState].fadeOut(0.2)
         }

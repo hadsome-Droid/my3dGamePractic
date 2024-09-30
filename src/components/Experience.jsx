@@ -6,7 +6,7 @@ import {CharacterController} from "./character/CharacterController.jsx";
 export const Experience = () => {
     return (
         <>
-            <OrbitControls/>
+            {/*<OrbitControls/>*/}
             <Sky sunPosition={[100, 20, 100]}/>
             <ambientLight intensity={1.5}/>
             <directionalLight
