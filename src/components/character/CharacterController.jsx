@@ -6,16 +6,26 @@ import {useKeyboardControls} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useGameStore} from "../../store.js";
 import * as THREE from "three";
+import {v4 as uuidv4} from 'uuid';
 
 const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
 const MAX_VEL = 3;
 const RUN_VEL = 1.5
-const BULLET_SPEED = 8
+const BULLET_SPEED = 80
+const FIRE_RATE = 380;
+
+export const WEAPON_OFFSET = {
+    x: -0.2,
+    y: 1.4,
+    z: 0.8,
+};
 
 export const CharacterController = ({onFire, ...props}) => {
+
         const characterState = useGameStore((state) => state.characterState)
         const setCharacterState = useGameStore((state) => state.setCharacterState)
+        const lastShoot = useRef(0);
 
         const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
         const leftPressed = useKeyboardControls((state) => state[Controls.left]);
@@ -37,28 +47,34 @@ export const CharacterController = ({onFire, ...props}) => {
             // Get the character's rotation
             const rotation = character.current?.rotation;
             // const rotation = rigidBody.current?.translation();
-
+            // console.log(rotation)
             // Calculate the direction vector
             const direction = new THREE.Vector3(0, 0, -1);
             direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
 
             // Spawn the bullet at the character's position
-            // const bulletPosition = character.current?.position.clone();
+            const test = character.current?.position;
 
             const bulletPosition = vec3(rigidBody.current?.translation());
 
             // Set the bullet's velocity based on the direction vector
             const bulletVelocity = direction.multiplyScalar(BULLET_SPEED);
 
+            if (Date.now() - lastShoot.current > FIRE_RATE) {
+                lastShoot.current = Date.now();
+                const newBullet = {
+                    // id: +new Date(),
+                    id: uuidv4(),
+                    position: bulletPosition,
+                    angle: bulletVelocity,
+                    rotation: rotation,
+                }
 
-            const newBullet = {
-                position: bulletPosition,
-                angle: bulletVelocity
+                // console.log(+new Date())
+
+                onFire(newBullet);
+
             }
-
-            console.log(bulletPosition)
-
-            onFire(newBullet);
             // Spawn the bullet with the calculated position and velocity
             // spawnBullet(bulletPosition, bulletVelocity);
         };
