@@ -17,11 +17,9 @@ export const Experience = () => {
     const onHit = (bulletId, position) => {
         // убираем пули которые попали кудато
         setBullets((bullets) => bullets.filter((b) => {
-            console.log('no', b.id, b.id !== bulletId)
             return b.id !== bulletId
         }))
         setHits((hits) => [...hits, {id: bulletId, position}])
-        console.log(bullets, bulletId)
     }
 
     const onHitsEnded = (hitId) => {
@@ -46,8 +44,7 @@ export const Experience = () => {
                         return <Bullet
                             key={index}
                             {...bullet}
-                            // onHit={(position) => onHit(index + '-' + +new Date(), position)}
-                            onHit={(position) => onHit(bullet.id, position)}
+                            onHit={(position) => onHit(index + '-' + +new Date(), position)}
                         />
                     })
                 }
@@ -57,7 +54,7 @@ export const Experience = () => {
                         <BulletHit key={hit.id} {...hit} onEnded={() => onHitsEnded(hit.id)}/>
                     ))
                 }
-                <RigidBody type={"fixed"}>
+                <RigidBody type={"fixed"} >
                     <mesh position-z={-15}>
                         <boxGeometry args={[12, 10, 0.5]}/>
                     </mesh>

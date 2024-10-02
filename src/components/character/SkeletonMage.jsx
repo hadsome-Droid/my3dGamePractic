@@ -8,6 +8,7 @@ import {useGraph} from '@react-three/fiber'
 import {useGLTF, useAnimations} from '@react-three/drei'
 import {SkeletonUtils} from 'three-stdlib'
 import {useGameStore} from "../../store.js";
+import {MeshBasicMaterial} from "three";
 
 const anim = {
     0: "1H_Melee_Attack_Chop",
@@ -105,17 +106,33 @@ const anim = {
     92: "Walking_D_Skeletons",
     93: "Idle_B",
 }
+const eyeMaterial = new MeshBasicMaterial({
+    // color: "hotpink",
+    color: "green",
+    toneMapped: false,
+});
+
+eyeMaterial.color.multiplyScalar(42);
 
 export function SkeletonMage(props) {
     const group = React.useRef()
     const {scene, animations} = useGLTF('./models/SkeletonMage/SkeletonMage.glb')
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
     const {nodes, materials} = useGraph(clone)
-    const {actions} = useAnimations(animations, group)
+    const {actions, mixer} = useAnimations(animations, group)
 
     const characterState = useGameStore((state) => state.characterState)
+    const setProgressAnimation = useGameStore((state) => state.setProgressAnimation)
 
     useEffect(() => {
+        const action = actions[characterState];
+        setProgressAnimation(action.getEffectiveWeight());
+        console.log(action.getClip().name);
+        if(characterState === 'Spellcast_Shoot'){
+            actions[characterState].reset().play()
+            // Устанавливаем скорость воспроизведения анимации
+            action.setEffectiveTimeScale(4.0); // Ускоряем анимацию в 2 раза
+        }
         actions[characterState].reset().play()
         return () => {
             actions[characterState].fadeOut(0.2)
@@ -139,7 +156,7 @@ export function SkeletonMage(props) {
                                  material={materials.skeleton} skeleton={nodes.Skeleton_Mage_Body.skeleton}
                                  scale={100}/>
                     <skinnedMesh name="Skeleton_Mage_Eyes" geometry={nodes.Skeleton_Mage_Eyes.geometry}
-                                 material={materials.Glow} skeleton={nodes.Skeleton_Mage_Eyes.skeleton}
+                                 material={eyeMaterial} skeleton={nodes.Skeleton_Mage_Eyes.skeleton}
                                  position={[0, 1.216, 0]} scale={100}/>
                     <skinnedMesh name="Skeleton_Mage_Jaw" geometry={nodes.Skeleton_Mage_Jaw.geometry}
                                  material={materials.skeleton} skeleton={nodes.Skeleton_Mage_Jaw.skeleton}

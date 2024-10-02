@@ -5,6 +5,10 @@ export const useGameStore = create((set) => ({
     characterState: 'Idle',
     setCharacterState: (characterState) => set({
         characterState,
+    }),
+    progressAnimation: 0,
+    setProgressAnimation: (progressAnimation) => set({
+        progressAnimation,
     })
 }))
 
