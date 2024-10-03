@@ -13,7 +13,7 @@ const bulletMaterial = new MeshBasicMaterial({
 
 bulletMaterial.color.multiplyScalar(42);
 
-export const Bullet = ({angle, position, rotation, onHit}) => {
+export const Bullet = ({monster, position, rotation, onHit}) => {
     const rigidBody = useRef();
     const [isVisible, setIsVisible] = useState(true);
     const [gravity, setGravity] = useState(0);
@@ -60,7 +60,7 @@ export const Bullet = ({angle, position, rotation, onHit}) => {
     }
     return (
         // <group position={[position.x, (position.y + 3), position.z]} rotation-y={rotation.y}>
-        <group position={[position.x, (position.y + 2.5), position.z]}>
+        <group position={[position.x, (position.y + 1.5), position.z]}>
             <group
                 // position-x={WEAPON_OFFSET.x}
                 // position-y={WEAPON_OFFSET.y}
@@ -77,6 +77,7 @@ export const Bullet = ({angle, position, rotation, onHit}) => {
                 }}
                     userData={{
                         type: "bullet",
+                        monster,
                         damage: 10,
                     }}
                 >
@@ -89,3 +90,4 @@ export const Bullet = ({angle, position, rotation, onHit}) => {
         </group>
     );
 };
+

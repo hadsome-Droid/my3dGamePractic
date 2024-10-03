@@ -2,7 +2,7 @@ import {CapsuleCollider, RigidBody, vec3} from "@react-three/rapier";
 import {SkeletonMage} from "./SkeletonMage.jsx";
 import {useEffect, useRef, useState} from "react";
 import {Controls} from "../../App.jsx";
-import {useKeyboardControls} from "@react-three/drei";
+import {Billboard, useKeyboardControls, Text} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useGameStore} from "../../store.js";
 import * as THREE from "three";
@@ -43,7 +43,7 @@ export const CharacterController = ({onFire, ...props}) => {
 
     const isLeftMouseDown = useRef(false);
     const isRightMouseDown = useRef(false);
-    const[movementSpeed, setMovementSpeed] = useState(0.1);
+    const [movementSpeed, setMovementSpeed] = useState(0.1);
 
     const shoot = () => {
         // Get the character's rotation
@@ -72,7 +72,7 @@ export const CharacterController = ({onFire, ...props}) => {
                 rotation: rotation,
             }
 
-            console.log(lastShoot)
+            // console.log(lastShoot)
 
             onFire(newBullet);
 
@@ -93,7 +93,7 @@ export const CharacterController = ({onFire, ...props}) => {
                 // setCharacterState('Spellcast_Raise-');
                 // setCharacterState('Spellcast_Summon');
             }
-            console.log(progressAnimation);
+            // console.log(progressAnimation);
             // else if (event.button === 2) {
             //     // Right mouse button was pressed
             //     isRightMouseDown.current = true;
@@ -214,10 +214,33 @@ export const CharacterController = ({onFire, ...props}) => {
                 enabledRotations={[false, false, false]}
             >
                 <CapsuleCollider args={[0.7, 0.6]} position={[0, 1.28, 0]}/>
+                <PlayerInfo/>
                 <group ref={character}>
                     <SkeletonMage/>
                 </group>
             </RigidBody>
         </group>
+    );
+};
+
+// полоска ХП
+const PlayerInfo = ({state}) => {
+    const health = 10;
+    const name = 'Hro';
+    return (
+        <Billboard position-y={3}>
+            <Text position-y={0.36} fontSize={0.4}>
+                {name}
+                <meshBasicMaterial color={'green'}/>
+            </Text>
+            <mesh position-z={-0.1}>
+                <planeGeometry args={[1, 0.2]}/>
+                <meshBasicMaterial color="black" transparent opacity={0.5}/>
+            </mesh>
+            <mesh scale-x={health / 100} position-x={-0.5 * (1 - health / 100)}>
+                <planeGeometry args={[1, 0.2]}/>
+                <meshBasicMaterial color="red"/>
+            </mesh>
+        </Billboard>
     );
 };
