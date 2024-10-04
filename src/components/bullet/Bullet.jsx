@@ -13,7 +13,7 @@ const bulletMaterial = new MeshBasicMaterial({
 
 bulletMaterial.color.multiplyScalar(42);
 
-export const Bullet = ({monster, position, rotation, onHit}) => {
+export const Bullet = ({ position, rotation, onHit}) => {
     const rigidBody = useRef();
     const [isVisible, setIsVisible] = useState(true);
     const [gravity, setGravity] = useState(0);
@@ -60,7 +60,7 @@ export const Bullet = ({monster, position, rotation, onHit}) => {
     }
     return (
         // <group position={[position.x, (position.y + 3), position.z]} rotation-y={rotation.y}>
-        <group position={[position.x, (position.y + 1.5), position.z]}>
+        <group position={[position.x + 0.4, (position.y + 1.2), position.z - 0.8]}>
             <group
                 // position-x={WEAPON_OFFSET.x}
                 // position-y={WEAPON_OFFSET.y}
@@ -77,13 +77,12 @@ export const Bullet = ({monster, position, rotation, onHit}) => {
                 }}
                     userData={{
                         type: "bullet",
-                        monster,
-                        damage: 10,
+                        damage: 100,
                     }}
                 >
                     <mesh position-z={0.25} material={bulletMaterial} castShadow>
                         {/*<boxGeometry args={[0.05, 0.05, 0.5]}/>*/}
-                        <sphereGeometry args={[0.05, 32, 16]}/>
+                        <sphereGeometry args={[0.09, 32, 16]}/>
                     </mesh>
                 </RigidBody>
             </group>

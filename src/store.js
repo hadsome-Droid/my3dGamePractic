@@ -21,19 +21,29 @@ export const useGameStore = create((set) => ({
     // Monsters
     monsters: {
         monster1: {
+            monsterAnimation: 'CharacterArmature|Idle',
             health: 100,
             stamina: 50,
+            speed: 0.05,
         },
         monster2: {
+            monsterAnimation: 'CharacterArmature|Idle',
             health: 150,
             stamina: 50,
+            speed: 0.05,
         },
     },
 
-    monsterAnimation: 'CharacterArmature|Walk',
-    setMonsterAnimation: (characterState) => set({
-        characterState,
-    }),
+
+    setMonsterAnimation: (monsterId, monsterAnimation) => set((state) => ({
+        monsters: {
+            ...state.monsters,
+            [monsterId]: {
+                ...state.monsters[monsterId],
+                monsterAnimation,
+            },
+        },
+    })),
 
     // Methods to update character parameters
     updateCharacterHealth: (characterId, health) =>
@@ -60,15 +70,18 @@ export const useGameStore = create((set) => ({
 
     // Methods to update monster parameters
     updateMonsterHealth: (monsterId, health) =>
-        set((state) => ({
-            monsters: {
-                ...state.monsters,
-                [monsterId]: {
-                    ...state.monsters[monsterId],
-                    health,
+        set((state) => {
+            console.log(`Updating monster ${monsterId} health to ${health}`)
+            return {
+                monsters: {
+                    ...state.monsters,
+                    [monsterId]: {
+                        ...state.monsters[monsterId],
+                        health,
+                    },
                 },
-            },
-        })),
+            }
+        }),
 
     updateMonsterStamina: (monsterId, stamina) =>
         set((state) => ({
@@ -77,6 +90,16 @@ export const useGameStore = create((set) => ({
                 [monsterId]: {
                     ...state.monsters[monsterId],
                     stamina,
+                },
+            },
+        })),
+    updateMonsterSpeed: (monsterId, speed) =>
+        set((state) => ({
+            monsters: {
+                ...state.monsters,
+                [monsterId]: {
+                    ...state.monsters[monsterId],
+                    speed,
                 },
             },
         })),

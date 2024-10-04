@@ -13,13 +13,9 @@ import {useGameStore} from "../store.js";
 export const Experience = () => {
     const [bullets, setBullets] = useState([])
     const [hits, setHits] = useState([])
-    const healthMonster1 = useGameStore((state) => {
-        return state.monsters.monster1.health
-    });
-    const healthMonster2 = useGameStore((state) => {
-        return state.monsters.monster2.health
-    });
-    console.log(healthMonster1, healthMonster2);
+    const healthMonster1 = useGameStore((state) => state.monsters.monster1.health);
+    const healthMonster2 = useGameStore((state) => state.monsters.monster2.health);
+    // console.log(healthMonster1, healthMonster2);
     const onFire = (bullet) => {
         setBullets((bullets) => [...bullets, bullet])
     }
@@ -79,11 +75,11 @@ export const Experience = () => {
                         <boxGeometry args={[12, 10, 0.5]}/>
                     </mesh>
                 </RigidBody>
-                <MonsterController position={[3, 0, 0]} monsterName={'Demon'} targetDir={{x: -0.8, y: 0, z: 0.5}}
+                <MonsterController position={[3, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
                                    health={healthMonster1} setTime={2000} monsterId={'monster1'}>
                     <Demon/>
                 </MonsterController>
-                <MonsterController position={[3, 0, 3]} monsterName={'Alien'} targetDir={{x: 0.5, y: 0, z: 0.5}}
+                <MonsterController position={[-3, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
                                    health={healthMonster2} setTime={3000} monsterId={'monster2'}>
                     <Alien/>
                 </MonsterController>

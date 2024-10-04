@@ -55,8 +55,10 @@ export const CharacterController = ({onFire, ...props}) => {
         direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
 
         // Spawn the bullet at the character's position
-        const test = character.current?.position;
+        const test = vec3(character.current?.rotation);
+        // const test = character.current?.position;
 
+        // const bulletPosition = vec3(character.current?.rotation);
         const bulletPosition = vec3(rigidBody.current?.translation());
 
         // Set the bullet's velocity based on the direction vector
@@ -72,7 +74,7 @@ export const CharacterController = ({onFire, ...props}) => {
                 rotation: rotation,
             }
 
-            // console.log(lastShoot)
+            // console.log(test)
 
             onFire(newBullet);
 
@@ -226,7 +228,7 @@ export const CharacterController = ({onFire, ...props}) => {
 // полоска ХП
 const PlayerInfo = ({state}) => {
     const health = 10;
-    const name = 'Hro';
+    const name = 'Roki';
     return (
         <Billboard position-y={3}>
             <Text position-y={0.36} fontSize={0.4}>

@@ -21,9 +21,16 @@ export const MonsterController = ({
     const monster = useRef()
     const rigidBodyMonster = useRef()
     const [direction, setDirection] = useState(targetDir); // Направление движения
-    const [targetDirection, setTargetDirection] = useState({x: 1, y: 0, z: 0}); // Целевое направление движения
-    const speed = 0.05; // Скорость движения
-    const {updateMonsterHealth} = useGameStore((state) => state.updateMonsterHealth);
+    // const [targetDirection, setTargetDirection] = useState({x: 1, y: 0, z: 0}); // Целевое направление движения
+    const [speed, setSpeed] = useState(0.05); // Скорость движения
+    const updateMonsterHealth = useGameStore((state) => state.updateMonsterHealth);
+    const setMonsterAnimation = useGameStore((state) => state.setMonsterAnimation);
+    const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation);
+    const updateMonsterSpeed = useGameStore((state) => state.updateMonsterSpeed);
+    const monsterSpeed = useGameStore((state) => state.monsters[monsterId].speed);
+
+    const randomNumber = parseFloat((Math.random() * (0.1 - 0.04) + 0.04).toFixed(2));
+    // console.log(monsterSpeed)
 
 
     // Ограничение области передвижения
@@ -35,37 +42,18 @@ export const MonsterController = ({
     };
 
     useFrame(() => {
-        if (rigidBodyMonster.current) {
+        if (rigidBodyMonster.current && monsterSpeed > 0.00) {
+            // console.log(monsterAnimation)
+            // setMonsterAnimation(monsterId, 'CharacterArmature|Walk');
             const position = rigidBodyMonster.current.translation();
             let newPosition = new THREE.Vector3(
-                position.x + direction.x * speed,
-                position.y + direction.y * speed,
-                position.z + direction.z * speed
+                position.x + direction.x * monsterSpeed,
+                position.y + direction.y * monsterSpeed,
+                position.z + direction.z * monsterSpeed
             );
-            // let newPosition = {
-            //     x: position.x + direction.x * speed,
-            //     y: position.y + direction.y * speed,
-            //     z: position.z + direction.z * speed,
-            // };
 
             // Проверка на границы области
-            // if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX) {
-            //     setTargetDirection({
-            //         x: -targetDirection.x,
-            //         y: targetDirection.y,
-            //         z: targetDirection.z,
-            //     });
-            // }
-            // if (newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
-            //     setTargetDirection({
-            //         x: targetDirection.x,
-            //         y: targetDirection.y,
-            //         z: -targetDirection.z,
-            //     });
-            // }
-
-            // Проверка на границы области
-            if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX) {
+            if (newPosition.x <= bounds.minX || newPosition.x >= bounds.maxX) {
                 direction.x = -direction.x; // Изменяем направление движения по оси X
             }
             if (newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
@@ -82,30 +70,43 @@ export const MonsterController = ({
             rigidBodyMonster.current.setRotation(quaternion);
         }
     });
-
+    let interval
     // Логика для изменения направления движения
     useEffect(() => {
-        const interval = setInterval(() => {
-            const newDirection = new THREE.Vector3(
-                Math.random() * 2 - 1,
-                0,
-                Math.random() * 2 - 1
-            ).normalize();
+        // if (monsterAnimation === 'CharacterArmature|Death') {
+        //     updateMonsterSpeed(0.00)
+        //     setMonsterAnimation(monsterId, 'CharacterArmature|Idle')
+        // }
 
-            // Плавно изменяем направление движения
-            const lerpFactor = 0.05; // Фактор интерполяции
-            setDirection((prevDirection) => {
-                return new THREE.Vector3().copy(prevDirection).lerp(newDirection, lerpFactor);
-            });
-            // setDirection({
-            //     x: Math.random() * 2 - 1,
-            //     y: 0,
-            //     z: Math.random() * 2 - 1,
-            // });
-        }, setTime); // Изменяем направление каждые 2 секунды
+        if (monsterSpeed > 0.00) {
+            if (monsterSpeed >= 0.07) {
+                setMonsterAnimation(monsterId, 'CharacterArmature|Run')
+            }
+
+            if (monsterSpeed <= 0.06) {
+                setMonsterAnimation(monsterId, 'CharacterArmature|Walk')
+
+            }
+            interval = setTimeout(() => {
+                updateMonsterSpeed(monsterId, randomNumber);
+
+                const newDirection = new THREE.Vector3(
+                    Math.random() * 2 - 1,
+                    0,
+                    Math.random() * 2 - 1
+                ).normalize();
+
+                // Плавно изменяем направление движения
+                const lerpFactor = 0.05; // Фактор интерполяции
+                setDirection((prevDirection) => {
+                    return new THREE.Vector3().copy(prevDirection).lerp(newDirection, lerpFactor);
+                });
+            }, setTime); // Изменяем направление каждые 2 секунды
+        }
+
 
         return () => clearInterval(interval);
-    }, [setTime]);
+    }, [monsterAnimation, randomNumber, setTime, updateMonsterSpeed, monsterId, monsterSpeed, setMonsterAnimation]);
 
 
     return (
@@ -121,11 +122,17 @@ export const MonsterController = ({
                         // делаем расчет из ходя из того сколько получили урона
                         const newHealth = health - other.rigidBody.userData?.damage
                         if (newHealth <= 0) {
+                            rigidBodyMonster.current?.setEnabled(false)
+                            clearInterval(interval)
+                            updateMonsterSpeed(monsterId, 0.00)
+                            setMonsterAnimation(monsterId, 'CharacterArmature|Death')
                             updateMonsterHealth(monsterId, 0);
                         } else {
+                            console.log('====', newHealth, monsterId)
+                            setMonsterAnimation(monsterId, 'CharacterArmature|HitReact')
                             updateMonsterHealth(monsterId, newHealth);
                         }
-                        console.log(health, newHealth, monsterId);
+                        console.log(other.rigidBody.userData?.damage);
                     }
                 }}
             >
@@ -144,6 +151,7 @@ const PlayerInfo = ({monsterName, health}) => {
 
     // const health = useGameStore((state) => {state.monsters.});
     const name = monsterName;
+    // console.log(health);
     return (
         <Billboard position-y={3}>
             <Text position-y={0.36} fontSize={0.4}>

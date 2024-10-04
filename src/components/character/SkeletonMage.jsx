@@ -127,7 +127,7 @@ export function SkeletonMage(props) {
     useEffect(() => {
         const action = actions[characterState];
         setProgressAnimation(action.getEffectiveWeight());
-        // console.log(action.getClip().name);
+        // console.log(nodes);
         if(characterState === 'Spellcast_Shoot'){
             actions[characterState].reset().play()
             // Устанавливаем скорость воспроизведения анимации

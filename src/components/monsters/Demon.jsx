@@ -8,6 +8,7 @@ import {useGraph} from '@react-three/fiber'
 import {useGLTF, useAnimations} from '@react-three/drei'
 import {SkeletonUtils} from 'three-stdlib'
 import {useGameStore} from "../../store.js";
+import {LoopOnce} from "three";
 
 
 const anim = {
@@ -33,15 +34,20 @@ export function Demon(props) {
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
     const {nodes, materials} = useGraph(clone)
     const {actions} = useAnimations(animations, group)
-    const monsterAnimation = useGameStore((state) => state.monsterAnimation)
+    const monsterAnimation = useGameStore((state) => state.monsters.monster1.monsterAnimation)
 
-    console.log(monsterAnimation)
+    if (actions['CharacterArmature|Death']) {
+        actions['CharacterArmature|Death'].loop = LoopOnce
+        actions['CharacterArmature|Death'].clampWhenFinished = true
+    }
+
+    // console.log(monsterAnimation)
     useEffect(() => {
         actions[monsterAnimation].reset().fadeIn(0.2).play()
         return () => {
-            // actions['CharacterArmature|Idle'].fadeOut(0.2).play()
+            actions[monsterAnimation].fadeOut(0.2).play()
         }
-    }, [actions])
+    }, [actions, monsterAnimation])
     return (
         <group ref={group} {...props} dispose={null}>
             <group name="Root_Scene">

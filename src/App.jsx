@@ -39,9 +39,9 @@ function App() {
                         <Experience/>
                     </Physics>
                 </Suspense>
-                {/*<EffectComposer disableNormalPass>*/}
-                {/*    <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur/>*/}
-                {/*</EffectComposer>*/}
+                <EffectComposer disableNormalPass>
+                    <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur/>
+                </EffectComposer>
             </Canvas>
             {/*</div>*/}
         </KeyboardControls>
