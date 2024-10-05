@@ -10,13 +10,13 @@ import {SkeletonUtils} from 'three-stdlib'
 import {useGameStore} from "../../store.js";
 import {LoopOnce} from "three";
 
-export function Alien(props) {
+export function Alien({monsterId, ...props}) {
     const group = React.useRef()
     const {scene, animations} = useGLTF('./models/monsters/Alien.glb')
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
     const {nodes, materials} = useGraph(clone)
     const {actions} = useAnimations(animations, group)
-    const monsterAnimation = useGameStore((state) => state.monsters.monster2.monsterAnimation)
+    const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation)
 
     if (actions['CharacterArmature|Death']) {
         actions['CharacterArmature|Death'].loop = LoopOnce

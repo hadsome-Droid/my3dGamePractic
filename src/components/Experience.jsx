@@ -13,8 +13,12 @@ import {useGameStore} from "../store.js";
 export const Experience = () => {
     const [bullets, setBullets] = useState([])
     const [hits, setHits] = useState([])
-    const healthMonster1 = useGameStore((state) => state.monsters.monster1.health);
-    const healthMonster2 = useGameStore((state) => state.monsters.monster2.health);
+    const healthMonster1 = useGameStore((state) => state.monsters.Demon1.health);
+    const healthMonster2 = useGameStore((state) => state.monsters.Alien1.health);
+    const healthMonster3 = useGameStore((state) => state.monsters.Demon2.health);
+    const healthMonster4 = useGameStore((state) => state.monsters.Alien2.health);
+    const healthMonster5 = useGameStore((state) => state.monsters.Demon3.health);
+    const healthMonster6 = useGameStore((state) => state.monsters.Alien3.health);
     // console.log(healthMonster1, healthMonster2);
     const onFire = (bullet) => {
         setBullets((bullets) => [...bullets, bullet])
@@ -76,12 +80,28 @@ export const Experience = () => {
                     </mesh>
                 </RigidBody>
                 <MonsterController position={[3, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
-                                   health={healthMonster1} setTime={2000} monsterId={'monster1'}>
-                    <Demon/>
+                                   health={healthMonster1} setTime={2000} monsterId={'Demon1'}>
+                    <Demon monsterId={'Demon1'}/>
                 </MonsterController>
                 <MonsterController position={[-3, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
-                                   health={healthMonster2} setTime={3000} monsterId={'monster2'}>
-                    <Alien/>
+                                   health={healthMonster2} setTime={3000} monsterId={'Alien1'}>
+                    <Alien monsterId={'Alien1'}/>
+                </MonsterController>
+                <MonsterController position={[4.5, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
+                                   health={healthMonster3} setTime={2000} monsterId={'Demon2'}>
+                    <Demon monsterId={'Demon2'}/>
+                </MonsterController>
+                <MonsterController position={[-4.5, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
+                                   health={healthMonster4} setTime={3000} monsterId={'Alien2'}>
+                    <Alien monsterId={'Alien2'}/>
+                </MonsterController>
+                <MonsterController position={[1.5, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
+                                   health={healthMonster5} setTime={2000} monsterId={'Demon3'}>
+                    <Demon monsterId={'Demon3'}/>
+                </MonsterController>
+                <MonsterController position={[-1.5, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
+                                   health={healthMonster6} setTime={3000} monsterId={'Alien3'}>
+                    <Alien monsterId={'Alien3'}/>
                 </MonsterController>
                 <Ground/>
             </group>

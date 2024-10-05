@@ -20,18 +20,43 @@ export const useGameStore = create((set) => ({
 
     // Monsters
     monsters: {
-        monster1: {
+        Demon1: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 100,
             stamina: 50,
-            speed: 0.05,
+            speed: 0.00,
         },
-        monster2: {
+        Alien1: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 150,
             stamina: 50,
-            speed: 0.05,
+            speed: 0.00,
         },
+        Demon2: {
+            monsterAnimation: 'CharacterArmature|Idle',
+            health: 100,
+            stamina: 50,
+            speed: 0.00,
+        },
+        Alien2: {
+            monsterAnimation: 'CharacterArmature|Idle',
+            health: 150,
+            stamina: 50,
+            speed: 0.00,
+        },
+        Demon3: {
+            monsterAnimation: 'CharacterArmature|Idle',
+            health: 100,
+            stamina: 50,
+            speed: 0.00,
+        },
+        Alien3: {
+            monsterAnimation: 'CharacterArmature|Idle',
+            health: 150,
+            stamina: 50,
+            speed: 0.00,
+        },
+
     },
 
 

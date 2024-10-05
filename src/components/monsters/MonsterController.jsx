@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {CapsuleCollider, RigidBody} from "@react-three/rapier";
 import {Billboard, Text} from "@react-three/drei";
-import {Demon} from "./Demon.jsx";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useGameStore} from "../../store.js";
@@ -21,13 +20,11 @@ export const MonsterController = ({
     const monster = useRef()
     const rigidBodyMonster = useRef()
     const [direction, setDirection] = useState(targetDir); // Направление движения
-    // const [targetDirection, setTargetDirection] = useState({x: 1, y: 0, z: 0}); // Целевое направление движения
-    const [speed, setSpeed] = useState(0.05); // Скорость движения
     const updateMonsterHealth = useGameStore((state) => state.updateMonsterHealth);
     const setMonsterAnimation = useGameStore((state) => state.setMonsterAnimation);
     const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation);
     const updateMonsterSpeed = useGameStore((state) => state.updateMonsterSpeed);
-    const monsterSpeed = useGameStore((state) => state.monsters[monsterId].speed);
+    const monsterSpeed = useGameStore((state) => state.monsters[monsterId].speed); //скорость движения
 
     const randomNumber = parseFloat((Math.random() * (0.1 - 0.04) + 0.04).toFixed(2));
     // console.log(monsterSpeed)
@@ -41,33 +38,63 @@ export const MonsterController = ({
         maxZ: 5,
     };
 
+    // Ограничение области передвижения (круг)
+    const center = new THREE.Vector3(0, position.y, 0); // Центр круга на той же высоте, что и монстр
+    const radius = 10; // Радиус круга
+
     useFrame(() => {
+
         if (rigidBodyMonster.current && monsterSpeed > 0.00) {
             // console.log(monsterAnimation)
             // setMonsterAnimation(monsterId, 'CharacterArmature|Walk');
             const position = rigidBodyMonster.current.translation();
             let newPosition = new THREE.Vector3(
                 position.x + direction.x * monsterSpeed,
-                position.y + direction.y * monsterSpeed,
+                position.y,
                 position.z + direction.z * monsterSpeed
             );
 
-            // Проверка на границы области
-            if (newPosition.x <= bounds.minX || newPosition.x >= bounds.maxX) {
-                direction.x = -direction.x; // Изменяем направление движения по оси X
-            }
-            if (newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
-                direction.z = -direction.z; // Изменяем направление движения по оси Z
+            // Проверка на границы круга
+            const distanceToCenter = new THREE.Vector2(newPosition.x, newPosition.z).distanceTo(new THREE.Vector2(center.x, center.z));
+            if (distanceToCenter > radius) {
+                // Если монстр вышел за пределы круга, отражаем вектор движения
+                const directionToCenter = new THREE.Vector2(newPosition.x - center.x, newPosition.z - center.z).normalize();
+                const normal = new THREE.Vector3(directionToCenter.x, 0, directionToCenter.y);
+                const reflectedDirection = new THREE.Vector3(direction.x, 0, direction.z).reflect(normal);
+
+                // Обновляем направление движения без интерполяции
+                setDirection(reflectedDirection);
+
+                // Корректируем позицию монстра, чтобы он не выходил за пределы круга
+                const offset = directionToCenter.multiplyScalar(radius - distanceToCenter);
+                // console.log(offset);
+                // newPosition.x -= offset.x;
+                // newPosition.z -= offset.x;
             }
 
             // Обновляем позицию монстра
             rigidBodyMonster.current.setTranslation(newPosition);
 
-
             // Поворачиваем монстра в направлении движения
             const directionVector = new THREE.Vector3(direction.x, direction.y, direction.z).normalize();
             const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), directionVector);
             rigidBodyMonster.current.setRotation(quaternion);
+            // // Проверка на границы области
+            // if (newPosition.x <= bounds.minX || newPosition.x >= bounds.maxX) {
+            //     direction.x = -direction.x; // Изменяем направление движения по оси X
+            // }
+            // if (newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
+            //     direction.z = -direction.z; // Изменяем направление движения по оси Z
+            // }
+            //
+            // // Обновляем позицию монстра
+            // rigidBodyMonster.current.setTranslation(newPosition);
+            //
+            //
+            // // Поворачиваем монстра в направлении движения
+            // const directionVector = new THREE.Vector3(direction.x, direction.y, direction.z).normalize();
+            // const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), directionVector);
+            // rigidBodyMonster.current.setRotation(quaternion);
         }
     });
     let interval
@@ -77,13 +104,14 @@ export const MonsterController = ({
         //     updateMonsterSpeed(0.00)
         //     setMonsterAnimation(monsterId, 'CharacterArmature|Idle')
         // }
-
-        if (monsterSpeed > 0.00) {
+        // updateMonsterSpeed(monsterId, 0.00)
+        if (monsterSpeed >= 0.01) {
             if (monsterSpeed >= 0.07) {
                 setMonsterAnimation(monsterId, 'CharacterArmature|Run')
             }
 
-            if (monsterSpeed <= 0.06) {
+            if (monsterSpeed <= 0.06 && monsterSpeed >= 0.01) {
+                console.log('=')
                 setMonsterAnimation(monsterId, 'CharacterArmature|Walk')
 
             }
@@ -95,12 +123,13 @@ export const MonsterController = ({
                     0,
                     Math.random() * 2 - 1
                 ).normalize();
-
+                setDirection(newDirection)
+                console.log(newDirection)
                 // Плавно изменяем направление движения
-                const lerpFactor = 0.05; // Фактор интерполяции
-                setDirection((prevDirection) => {
-                    return new THREE.Vector3().copy(prevDirection).lerp(newDirection, lerpFactor);
-                });
+                // const lerpFactor = 0.05; // Фактор интерполяции
+                // setDirection((prevDirection) => {
+                //     return new THREE.Vector3().copy(prevDirection).lerp(newDirection, lerpFactor);
+                // });
             }, setTime); // Изменяем направление каждые 2 секунды
         }
 
@@ -128,11 +157,11 @@ export const MonsterController = ({
                             setMonsterAnimation(monsterId, 'CharacterArmature|Death')
                             updateMonsterHealth(monsterId, 0);
                         } else {
-                            console.log('====', newHealth, monsterId)
+                            // console.log('====', newHealth, monsterId)
                             setMonsterAnimation(monsterId, 'CharacterArmature|HitReact')
                             updateMonsterHealth(monsterId, newHealth);
                         }
-                        console.log(other.rigidBody.userData?.damage);
+                        // console.log(other.rigidBody.userData?.damage);
                     }
                 }}
             >
@@ -149,9 +178,8 @@ export const MonsterController = ({
 // полоска ХП
 const PlayerInfo = ({monsterName, health}) => {
 
-    // const health = useGameStore((state) => {state.monsters.});
     const name = monsterName;
-    // console.log(health);
+
     return (
         <Billboard position-y={3}>
             <Text position-y={0.36} fontSize={0.4}>
