@@ -35,7 +35,7 @@ export function Demon({monsterId, ...props}) {
     const {nodes, materials} = useGraph(clone)
     const {actions} = useAnimations(animations, group)
     const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation)
-    console.log(props)
+    // console.log(props)
     if (actions['CharacterArmature|Death']) {
         actions['CharacterArmature|Death'].loop = LoopOnce
         actions['CharacterArmature|Death'].clampWhenFinished = true

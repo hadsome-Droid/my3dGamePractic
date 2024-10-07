@@ -3,7 +3,7 @@ import {useFrame} from "@react-three/fiber";
 import {useEffect, useMemo, useRef} from "react";
 import {Color, MathUtils, Vector3} from "three";
 
-const bulletHitcolor = new Color("red");
+const bulletHitcolor = new Color("orangered");
 bulletHitcolor.multiplyScalar(12);
 
 const AnimatedBox = ({scale, target, speed}) => {
@@ -48,6 +48,8 @@ export const BulletHit = ({nb = 100, position, onEnded}) => {
         <group position={[position.x, position.y + 1, position.z]}>
             <Instances>
                 <boxGeometry/>
+                {/*<sphereGeometry/>*/}
+                {/*<torusGeometry/>*/}
                 <meshStandardMaterial toneMapped={false} color={bulletHitcolor}/>
                 {boxes.map((box, i) => (
                     <AnimatedBox key={i} {...box} />

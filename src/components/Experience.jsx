@@ -37,7 +37,7 @@ export const Experience = () => {
     }
     return (
         <>
-            {/*<OrbitControls/>*/}
+            <OrbitControls/>
             <Sky sunPosition={[100, 20, 100]}/>
             <ambientLight intensity={1.5}/>
             <directionalLight
@@ -48,10 +48,10 @@ export const Experience = () => {
                 color={'white'}
             />
             <group position-y={-1}>
-                <CharacterController onFire={onFire}/>
+                <CharacterController onFire={onFire} />
                 {
                     bullets.map((bullet, index) => {
-                        // console.log(bullet);
+
                         return <Bullet
                             key={index}
                             {...bullet}
@@ -79,30 +79,30 @@ export const Experience = () => {
                         <boxGeometry args={[12, 10, 0.5]}/>
                     </mesh>
                 </RigidBody>
-                <MonsterController position={[3, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
-                                   health={healthMonster1} setTime={2000} monsterId={'Demon1'}>
+                <MonsterController position={[3, 0, 3]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
+                                   health={healthMonster1} setTime={2000} monsterId={'Demon1'} >
                     <Demon monsterId={'Demon1'}/>
                 </MonsterController>
-                <MonsterController position={[-3, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
+                <MonsterController position={[-3, 0, -1.6]} monsterName={'Alien'} targetDir={{x: -0.3, y: 0, z: 0.3}}
                                    health={healthMonster2} setTime={3000} monsterId={'Alien1'}>
                     <Alien monsterId={'Alien1'}/>
                 </MonsterController>
-                <MonsterController position={[4.5, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
-                                   health={healthMonster3} setTime={2000} monsterId={'Demon2'}>
-                    <Demon monsterId={'Demon2'}/>
-                </MonsterController>
-                <MonsterController position={[-4.5, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
-                                   health={healthMonster4} setTime={3000} monsterId={'Alien2'}>
-                    <Alien monsterId={'Alien2'}/>
-                </MonsterController>
-                <MonsterController position={[1.5, 0, 0.5]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
-                                   health={healthMonster5} setTime={2000} monsterId={'Demon3'}>
-                    <Demon monsterId={'Demon3'}/>
-                </MonsterController>
-                <MonsterController position={[-1.5, 0, -0.5]} monsterName={'Alien'} targetDir={{x: -0.5, y: 0, z: 0.5}}
-                                   health={healthMonster6} setTime={3000} monsterId={'Alien3'}>
-                    <Alien monsterId={'Alien3'}/>
-                </MonsterController>
+                {/*<MonsterController position={[4.5, 0, -1.7]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}*/}
+                {/*                   health={healthMonster3} setTime={2000} monsterId={'Demon2'}>*/}
+                {/*    <Demon monsterId={'Demon2'}/>*/}
+                {/*</MonsterController>*/}
+                {/*<MonsterController position={[-4.5, 0, 1.8]} monsterName={'Alien'} targetDir={{x: -0.3, y: 0, z: 0.3}}*/}
+                {/*                   health={healthMonster4} setTime={3000} monsterId={'Alien2'}>*/}
+                {/*    <Alien monsterId={'Alien2'}/>*/}
+                {/*</MonsterController>*/}
+                {/*<MonsterController position={[1.5, 0, -4.3]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}*/}
+                {/*                   health={healthMonster5} setTime={2000} monsterId={'Demon3'}>*/}
+                {/*    <Demon monsterId={'Demon3'}/>*/}
+                {/*</MonsterController>*/}
+                {/*<MonsterController position={[-1.5, 0, -2.4]} monsterName={'Alien'} targetDir={{x: -0.3, y: 0, z: 0.3}}*/}
+                {/*                   health={healthMonster6} setTime={3000} monsterId={'Alien3'}>*/}
+                {/*    <Alien monsterId={'Alien3'}/>*/}
+                {/*</MonsterController>*/}
                 <Ground/>
             </group>
 

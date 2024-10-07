@@ -1,4 +1,5 @@
 import {create} from "zustand";
+import * as THREE from "three";
 
 export const useGameStore = create((set) => ({
     //Character Controller
@@ -10,6 +11,8 @@ export const useGameStore = create((set) => ({
     setProgressAnimation: (progressAnimation) => set({
         progressAnimation,
     }),
+    playerPosition: new THREE.Vector3(0, 0, 0),
+    setPlayerPosition: (position) => set({playerPosition: position}),
     // Characters
     characters: {
         player: {
@@ -19,42 +22,44 @@ export const useGameStore = create((set) => ({
     },
 
     // Monsters
+    // run 0.08
+    //walk 0.04
     monsters: {
         Demon1: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 100,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
         Alien1: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 150,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
         Demon2: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 100,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
         Alien2: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 150,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
         Demon3: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 100,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
         Alien3: {
             monsterAnimation: 'CharacterArmature|Idle',
             health: 150,
             stamina: 50,
-            speed: 0.00,
+            speed: 0.04,
         },
 
     },
