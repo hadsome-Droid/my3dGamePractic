@@ -6,19 +6,23 @@ import {Billboard, useKeyboardControls, Text} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useGameStore} from "../../store.js";
 import * as THREE from "three";
+import {InfoPanel} from "../infoPanel/InfoPanel.jsx";
+import SkillPanel from "../infoPanel/skillPanel.jsx";
 
 const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
 const MAX_VEL = 3;
 const RUN_VEL = 1.5
+// const RUN_VEL = 3
 const BULLET_SPEED = 80
-const FIRE_RATE = 380;
+const FIRE_RATE = 120;
+const BULLET_COUNT = 10;
 const POSITION_UPDATE_INTERVAL = 50; // Интервал обновления позиции в миллисекундах
 
 export const WEAPON_OFFSET = {
-    x: -0.2,
-    y: 1.4,
-    z: 0.8,
+    // x: -0.2,
+    // y: 1.4,
+    // z: 0.8,
 };
 
 export const CharacterController = ({onFire, ...props}) => {
@@ -48,6 +52,8 @@ export const CharacterController = ({onFire, ...props}) => {
     const [movementSpeed, setMovementSpeed] = useState(0.1);
     const [characterPosition, setCharacterPosition] = useState()
 
+    const shootInterval = useRef(null);
+
     const shoot = () => {
         // Get the character's rotation
         const rotation = character.current?.rotation;
@@ -61,16 +67,26 @@ export const CharacterController = ({onFire, ...props}) => {
         // Set the bullet's velocity based on the direction vector
         const bulletVelocity = direction.multiplyScalar(BULLET_SPEED);
 
-        if (Date.now() - lastShoot.current > FIRE_RATE) {
-            lastShoot.current = Date.now();
-            const newBullet = {
-                position: bulletPosition,
-                angle: bulletVelocity,
-                rotation: rotation,
-            }
-            onFire(newBullet);
+        // if (Date.now() - lastShoot.current > FIRE_RATE) {
+        //     lastShoot.current = Date.now();
+        //     const newBullet = {
+        //         // id: Date.now(),
+        //         position: bulletPosition,
+        //         angle: bulletVelocity,
+        //         rotation: rotation,
+        //     }
+        //     onFire(newBullet);
+        //
+        // }
 
+        const newBullet = {
+            // id: Date.now(),
+            position: bulletPosition,
+            angle: bulletVelocity,
+            rotation: rotation,
         }
+        onFire(newBullet);
+
     };
 
     useEffect(() => {
@@ -80,6 +96,9 @@ export const CharacterController = ({onFire, ...props}) => {
                 shoot()
                 isLeftMouseDown.current = true;
                 setCharacterState('Spellcast_Shoot');
+
+                // Start shooting interval
+                shootInterval.current = setInterval(shoot, FIRE_RATE);
             }
 
 
@@ -90,6 +109,10 @@ export const CharacterController = ({onFire, ...props}) => {
                 // Left mouse button was released
                 isLeftMouseDown.current = false;
                 setCharacterState('Idle');
+
+                // Clear shooting interval
+                clearInterval(shootInterval.current);
+                shootInterval.current = null;
             }
         };
 
@@ -99,9 +122,11 @@ export const CharacterController = ({onFire, ...props}) => {
         return () => {
             document.removeEventListener('mousedown', handleMouseDown);
             document.removeEventListener('mouseup', handleMouseUp);
+            if (shootInterval.current) {
+                clearInterval(shootInterval.current);
+            }
         };
-    }, []);
-
+    }, [setCharacterState]);
 
     useFrame((state) => {
 
@@ -133,12 +158,11 @@ export const CharacterController = ({onFire, ...props}) => {
 
         rigidBody.current?.applyImpulse(impulse, true);
 
+
         if (Math.abs(linvel.x) > RUN_VEL || Math.abs(linvel.z) > RUN_VEL) {
             if (shiftPressed) {
                 setMovementSpeed(0.5)
                 setCharacterState('Running_C');
-                console.log(movementSpeed)
-
             } else {
                 if (!isLeftMouseDown.current && !isRightMouseDown.current && isOnFloor.current) {
                     setMovementSpeed(0.1)
@@ -153,21 +177,36 @@ export const CharacterController = ({onFire, ...props}) => {
         }
 
 
+        // if (changeRotation) {
+        //     const angle = Math.atan2(velocity.x, velocity.z);
+        //     character.current.rotation.y = angle;
+        // }
         if (changeRotation) {
             const angle = Math.atan2(linvel.x, linvel.z);
             character.current.rotation.y = angle;
         }
 
         //Camera Follow
-        const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3())
-        state.camera.position.x = characterWorldPosition.x;
-        state.camera.position.z = characterWorldPosition.z + 14;
 
-        const targetCameraPosition = new THREE.Vector3(
-            characterWorldPosition.x,
-            0,
-            characterWorldPosition.z + 14
-        );
+        // const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3());
+        // const characterRotation = character.current.rotation;
+        //
+        // // Calculate camera position behind the character
+        // const cameraOffset = new THREE.Vector3(4, 2, 8);
+        // const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(characterRotation);
+        // cameraOffset.applyMatrix4(rotationMatrix);
+        // state.camera.position.copy(characterWorldPosition).add(cameraOffset);
+        //
+        // // Make the camera look at the character
+        // state.camera.lookAt(cameraOffset);
+        // console.log(cameraOffset)
+
+        const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3())
+
+        state.camera.position.x = characterWorldPosition.x;
+        state.camera.position.z = characterWorldPosition.z + 10;
+        state.camera.position.y = characterWorldPosition.y + 4;
+
 
         const targetLookAt = new THREE.Vector3(characterWorldPosition.x, 0, characterWorldPosition.z);
         state.camera.lookAt(targetLookAt);
@@ -180,33 +219,34 @@ export const CharacterController = ({onFire, ...props}) => {
         }
     })
 
-    useEffect(() => {
-        // setPlayerPosition(characterPosition);
-    }, [characterPosition, setPlayerPosition]);
+    const skills = ["Fireball", "Heal", "Teleport", "Shield"]; // Пример списка умений
 
-    // console.log(shiftPressed);
 
     return (
-        <group ref={group} {...props}>
-            <RigidBody
-                ref={rigidBody}
-                type="dynamic"
-                colliders={false}
-                // linearDamping={12}
-                scale={[0.5, 0.5, 0.5]}
-                onCollisionEnter={() => {
-                    isOnFloor.current = true;
-                }}
-                // lockRotations
-                enabledRotations={[false, false, false]}
-            >
-                <CapsuleCollider args={[0.7, 0.6]} position={[0, 1.28, 0]}/>
-                <PlayerInfo/>
-                <group ref={character}>
-                    <SkeletonMage/>
-                </group>
-            </RigidBody>
-        </group>
+        <>
+            <group ref={group} {...props}>
+                <RigidBody
+                    ref={rigidBody}
+                    type="dynamic"
+                    colliders={false}
+                    // linearDamping={12}
+                    scale={[0.5, 0.5, 0.5]}
+                    onCollisionEnter={() => {
+                        isOnFloor.current = true;
+                    }}
+                    // lockRotations
+                    enabledRotations={[false, false, false]}
+                >
+                    <SkillPanel skills={skills}/>
+                    <CapsuleCollider args={[0.7, 0.6]} position={[0, 1.28, 0]}/>
+                    <PlayerInfo/>
+                    <group ref={character}>
+                        <SkeletonMage/>
+                    </group>
+                </RigidBody>
+            </group>
+            {/*<FloatingPanel />*/}
+        </>
     );
 };
 

@@ -123,7 +123,6 @@ export const MonsterController = ({
             }
 
             if (monsterSpeed <= 0.06 && monsterSpeed >= 0.01) {
-                console.log('=')
                 setMonsterAnimation(monsterId, 'CharacterArmature|Walk')
 
             }

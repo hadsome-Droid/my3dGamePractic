@@ -1,4 +1,4 @@
-import {OrbitControls, Sky} from "@react-three/drei";
+import {OrbitControls, PointerLockControls, Sky} from "@react-three/drei";
 import {Ground} from "./ground/Ground.jsx";
 import {RigidBody} from "@react-three/rapier";
 import {CharacterController} from "./character/CharacterController.jsx";
@@ -9,6 +9,7 @@ import {MonsterController} from "./monsters/MonsterController.jsx";
 import {Demon} from "./monsters/Demon.jsx";
 import {Alien} from "./monsters/Alien.jsx";
 import {useGameStore} from "../store.js";
+import {InfoPanel} from "./infoPanel/InfoPanel.jsx";
 
 export const Experience = () => {
     const [bullets, setBullets] = useState([])
@@ -19,7 +20,7 @@ export const Experience = () => {
     const healthMonster4 = useGameStore((state) => state.monsters.Alien2.health);
     const healthMonster5 = useGameStore((state) => state.monsters.Demon3.health);
     const healthMonster6 = useGameStore((state) => state.monsters.Alien3.health);
-    // console.log(healthMonster1, healthMonster2);
+
     const onFire = (bullet) => {
         setBullets((bullets) => [...bullets, bullet])
     }
@@ -35,9 +36,11 @@ export const Experience = () => {
     const onHitsEnded = (hitId) => {
         setHits((hits) => hits.filter((h) => h.id !== hitId))
     }
+
     return (
         <>
-            <OrbitControls/>
+            {/*<OrbitControls/>*/}
+            {/*<PointerLockControls/>*/}
             <Sky sunPosition={[100, 20, 100]}/>
             <ambientLight intensity={1.5}/>
             <directionalLight
@@ -48,7 +51,8 @@ export const Experience = () => {
                 color={'white'}
             />
             <group position-y={-1}>
-                <CharacterController onFire={onFire} />
+                {/*<InfoPanel/>*/}
+                <CharacterController onFire={onFire}/>
                 {
                     bullets.map((bullet, index) => {
 
@@ -80,7 +84,7 @@ export const Experience = () => {
                     </mesh>
                 </RigidBody>
                 <MonsterController position={[3, 0, 3]} monsterName={'Demon'} targetDir={{x: -0.3, y: 0, z: -0.3}}
-                                   health={healthMonster1} setTime={2000} monsterId={'Demon1'} >
+                                   health={healthMonster1} setTime={2000} monsterId={'Demon1'}>
                     <Demon monsterId={'Demon1'}/>
                 </MonsterController>
                 <MonsterController position={[-3, 0, -1.6]} monsterName={'Alien'} targetDir={{x: -0.3, y: 0, z: 0.3}}
@@ -105,11 +109,6 @@ export const Experience = () => {
                 {/*</MonsterController>*/}
                 <Ground/>
             </group>
-
-            {/*<mesh>*/}
-            {/*    <boxGeometry/>*/}
-            {/*    <meshNormalMaterial/>*/}
-            {/*</mesh>*/}
 
         </>
     );

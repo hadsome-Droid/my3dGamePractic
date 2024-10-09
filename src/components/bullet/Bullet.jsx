@@ -4,7 +4,7 @@ import {MeshBasicMaterial} from "three";
 import {WEAPON_OFFSET} from "../character/CharacterController.jsx";
 import * as THREE from "three";
 
-const BULLET_SPEED = 18;
+const BULLET_SPEED = 13;
 
 const bulletMaterial = new MeshBasicMaterial({
     // color: "hotpink",
@@ -76,9 +76,13 @@ export const Bullet = ({position, rotation, onHit}) => {
         setIsVisible(false); // Удаляем компонент из DOM
     }
 
+    // Применяем смещение к позиции пули
+    // const bulletPosition = new THREE.Vector3(position.x, position.y + 1.5, position.z)
+    //     .add(new THREE.Vector3(WEAPON_OFFSET.x, 0, WEAPON_OFFSET.z));
+    // console.log(bulletPosition)
+
     return (
         <group position={[position.x, (position.y + 1.5), position.z]} rotation={rotation}>
-            {/*// <group position={[position.x + 0.4, (position.y + 1.2), position.z - 0.8]}>*/}
             <group>
                 <RigidBody
                     ref={rigidBody}
@@ -87,16 +91,17 @@ export const Bullet = ({position, rotation, onHit}) => {
                     if (e.other.rigidBody.userData?.type !== 'bullet') {
                         handleIntersectionEnter()
                     }
-                    // console.log(e)
                 }}
                     userData={{
                         type: "bullet",
                         damage: 25,
                     }}
                 >
-                    <mesh position-z={0.25} material={bulletMaterial} castShadow>
+                    <mesh position-z={0.45} material={bulletMaterial} castShadow rotation-x={Math.PI / 2}>
                         {/*<boxGeometry args={[0.05, 0.05, 0.5]}/>*/}
-                        <sphereGeometry args={[0.08, 32, 16]}/>
+                        {/*<sphereGeometry args={[0.08, 32, 16]}/>*/}
+                        {/*<torusGeometry args={[0.1, 0.02, 12, 48]}/>*/}
+                        <coneGeometry args={[0.05, 0.3, 7]}/>
                     </mesh>
                 </RigidBody>
             </group>

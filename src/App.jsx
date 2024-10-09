@@ -5,6 +5,7 @@ import {Suspense, useMemo} from "react";
 import {Physics} from "@react-three/rapier";
 import {KeyboardControls} from "@react-three/drei";
 import {Bloom, EffectComposer} from "@react-three/postprocessing";
+import {InfoPanel} from "./components/infoPanel/InfoPanel.jsx";
 
 export const Controls = {
     forward: "forward",
@@ -30,22 +31,27 @@ function App() {
     );
 
     return (
-        <KeyboardControls map={map}>
-            {/*<div id="container">*/}
-            {/*    <div className="aim"></div>*/}
-            <Canvas shadows camera={{position: [0, 6, 14], fov: 42}}>
-                <color attach="background" args={["#ececec"]}/>
-                <Suspense>
-                    <Physics>
-                        <Experience/>
-                    </Physics>
-                </Suspense>
-                <EffectComposer disableNormalPass>
-                    <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur/>
-                </EffectComposer>
-            </Canvas>
-            {/*</div>*/}
-        </KeyboardControls>
+        <>
+            <KeyboardControls map={map}>
+                {/*<div id="container">*/}
+                {/*    <div className="aim"></div>*/}
+                <Canvas shadows camera={{position: [0, 6, 14], fov: 42}}>
+                    <color attach="background" args={["#ececec"]}/>
+                    <Suspense>
+                        <Physics>
+                            <Experience/>
+                        </Physics>
+                    </Suspense>
+                    <EffectComposer disableNormalPass>
+                        <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur/>
+                    </EffectComposer>
+                    {/*<InfoPanel/>*/}
+
+                </Canvas>
+                {/*</div>*/}
+            </KeyboardControls>
+        </>
+
 
     );
 }

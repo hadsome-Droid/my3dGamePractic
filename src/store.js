@@ -133,5 +133,7 @@ export const useGameStore = create((set) => ({
                 },
             },
         })),
+    isButtonPush: false,
+    updateButtonPush: (isButtonPush) => (set({isButtonPush}))
 }))
 

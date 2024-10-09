@@ -1,0 +1,50 @@
+.infoPanel {
+  position: absolute;
+  top: 108vh;
+  left: 80px;
+  width: 108vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(0, 0, 0, 0.5); // Прозрачный фон для панели
+  padding: 10px;
+
+
+  color: white;
+  fontFamily: 'Arial, sans-serif';
+  z-Index: 1000;
+}
+
+.skillsTitle {
+
+}
+
+.skills {
+  display: flex;
+  //justify-content: center;
+  gap: 10px;
+  //display: flex;
+  //justify-content: center;
+  //align-items: center;
+  //width: 100%;
+}
+
+.skill {
+  width: 50px;
+  height: 55px;
+
+  //padding: 10px;
+  //background: gray;
+  //color: white;
+  //border: none;
+  //cursor: pointer;
+  //transition: background 0.3s ease;
+  borderRadius: 5px;
+
+
+  & .skillSelected {
+    background-color: #1e491f;
+  }
+}
+
