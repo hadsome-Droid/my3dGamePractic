@@ -4,10 +4,11 @@ import {useEffect, useRef, useState} from "react";
 import {Controls} from "../../App.jsx";
 import {Billboard, useKeyboardControls, Text} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-import {useGameStore} from "../../store.js";
+// import {useGameStore} from "../../stores/store.js";
 import * as THREE from "three";
-import {InfoPanel} from "../infoPanel/InfoPanel.jsx";
 import SkillPanel from "../infoPanel/skillPanel.jsx";
+import {useCharacterStore} from "../../stores/characterStore.js";
+import {useSkillStore} from "../../stores/skillStore.js";
 
 const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
@@ -27,10 +28,12 @@ export const WEAPON_OFFSET = {
 
 export const CharacterController = ({onFire, ...props}) => {
     const group = useRef();
-    const characterState = useGameStore((state) => state.characterState)
-    const setCharacterState = useGameStore((state) => state.setCharacterState)
-    const progressAnimation = useGameStore((state) => state.progressAnimation)
-    const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
+    const characterState = useCharacterStore((state) => state.characterState)
+    const setCharacterState = useCharacterStore((state) => state.setCharacterState)
+    const progressAnimation = useCharacterStore((state) => state.progressAnimation)
+    const setPlayerPosition = useCharacterStore((state) => state.setPlayerPosition);
+    const updateButtonPush = useSkillStore((state) => state.updateButtonPush)
+    const updateSkillSelected = useSkillStore((state) => state.updateSkillSelected)
     const lastShoot = useRef(0);
     const lastPositionUpdate = useRef(Date.now());
 
@@ -42,6 +45,10 @@ export const CharacterController = ({onFire, ...props}) => {
     const forwardPressed = useKeyboardControls(
         (state) => state[Controls.forward]
     );
+    const skill1Pressed = useKeyboardControls((state) => state[Controls.skill1]);
+    const skill2Pressed = useKeyboardControls((state) => state[Controls.skill2]);
+    const skill3Pressed = useKeyboardControls((state) => state[Controls.skill3]);
+    const skill4Pressed = useKeyboardControls((state) => state[Controls.skill4]);
 
     const character = useRef();
     const rigidBody = useRef();
@@ -50,7 +57,7 @@ export const CharacterController = ({onFire, ...props}) => {
     const isLeftMouseDown = useRef(false);
     const isRightMouseDown = useRef(false);
     const [movementSpeed, setMovementSpeed] = useState(0.1);
-    const [characterPosition, setCharacterPosition] = useState()
+    const [skillId, setSkillId] = useState()
 
     const shootInterval = useRef(null);
 
@@ -89,7 +96,33 @@ export const CharacterController = ({onFire, ...props}) => {
 
     };
 
+
     useEffect(() => {
+
+        if (skill1Pressed) {
+            console.log('++')
+            updateButtonPush(1, true)
+            updateSkillSelected('Fireball')
+
+        }
+
+        if (skill2Pressed) {
+            updateButtonPush(2, true)
+            updateSkillSelected('Snowball')
+        }
+
+        if (skill3Pressed) {
+            console.log('skill3')
+            updateButtonPush(3, true)
+            updateSkillSelected('Waterball')
+
+        }
+
+        if (skill4Pressed) {
+            console.log('skill4')
+            updateButtonPush(4, true)
+        }
+
         const handleMouseDown = (event) => {
             if (event.button === 0) {
                 // Left mouse button was pressed
@@ -126,8 +159,8 @@ export const CharacterController = ({onFire, ...props}) => {
                 clearInterval(shootInterval.current);
             }
         };
-    }, [setCharacterState]);
-
+    }, [setCharacterState, skill1Pressed, skill2Pressed, skill3Pressed, skill4Pressed]);
+    // console.log(skill1Pressed)
     useFrame((state) => {
 
         const impulse = {x: 0, y: 0, z: 0};
@@ -219,8 +252,6 @@ export const CharacterController = ({onFire, ...props}) => {
         }
     })
 
-    const skills = ["Fireball", "Heal", "Teleport", "Shield"]; // Пример списка умений
-
 
     return (
         <>
@@ -237,7 +268,7 @@ export const CharacterController = ({onFire, ...props}) => {
                     // lockRotations
                     enabledRotations={[false, false, false]}
                 >
-                    <SkillPanel skills={skills}/>
+                    <SkillPanel skillId={skillId}/>
                     <CapsuleCollider args={[0.7, 0.6]} position={[0, 1.28, 0]}/>
                     <PlayerInfo/>
                     <group ref={character}>

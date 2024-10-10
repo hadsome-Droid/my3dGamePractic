@@ -7,8 +7,9 @@ import React, {useEffect} from 'react'
 import {useGraph} from '@react-three/fiber'
 import {useGLTF, useAnimations} from '@react-three/drei'
 import {SkeletonUtils} from 'three-stdlib'
-import {useGameStore} from "../../store.js";
+// import {useGameStore} from "../../stores/store.js";
 import {MeshBasicMaterial} from "three";
+import {useCharacterStore} from "../../stores/characterStore.js";
 
 const anim = {
     0: "1H_Melee_Attack_Chop",
@@ -121,14 +122,17 @@ export function SkeletonMage(props) {
     const {nodes, materials} = useGraph(clone)
     const {actions, mixer} = useAnimations(animations, group)
 
-    const characterState = useGameStore((state) => state.characterState)
-    const setProgressAnimation = useGameStore((state) => state.setProgressAnimation)
+    const characterState = useCharacterStore((state) => state.characterState)
+    const setProgressAnimation = useCharacterStore((state) => state.setProgressAnimation)
+    // const { characterState, setProgressAnimation} = useGameStore()
+    // const characterState = useGameStore((state) => state.characterState)
+    // const setProgressAnimation = useGameStore((state) => state.setProgressAnimation)
 
     useEffect(() => {
         const action = actions[characterState];
         setProgressAnimation(action.getEffectiveWeight());
         // console.log(nodes);
-        if(characterState === 'Spellcast_Shoot'){
+        if (characterState === 'Spellcast_Shoot') {
             actions[characterState].reset().play()
             // Устанавливаем скорость воспроизведения анимации
             action.setEffectiveTimeScale(4.0); // Ускоряем анимацию в 2 раза

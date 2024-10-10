@@ -14,6 +14,10 @@ export const Controls = {
     right: "right",
     jump: "jump",
     shift: "shift",
+    skill1: "skill1",
+    skill2: "skill2",
+    skill3: "skill3",
+    skill4: "skill4",
 };
 
 function App() {
@@ -26,6 +30,10 @@ function App() {
             {name: Controls.right, keys: ["ArrowRight", "KeyD"]},
             {name: Controls.jump, keys: ["Space"]},
             {name: Controls.shift, keys: ["Shift"]},
+            {name: Controls.skill1, keys: ["Digit1"]},
+            {name: Controls.skill2, keys: ["Digit2"]},
+            {name: Controls.skill3, keys: ["Digit3"]},
+            {name: Controls.skill4, keys: ["Digit4"]},
         ],
         []
     );

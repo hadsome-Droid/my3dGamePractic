@@ -8,19 +8,20 @@ import {BulletHit} from "./bullet/BulletHit.jsx";
 import {MonsterController} from "./monsters/MonsterController.jsx";
 import {Demon} from "./monsters/Demon.jsx";
 import {Alien} from "./monsters/Alien.jsx";
-import {useGameStore} from "../store.js";
+// import {useGameStore} from "../stores/store.js";
 import {InfoPanel} from "./infoPanel/InfoPanel.jsx";
+import {useMonsterStore} from "../stores/monsterStore.js";
 
 export const Experience = () => {
     const [bullets, setBullets] = useState([])
     const [hits, setHits] = useState([])
-    const healthMonster1 = useGameStore((state) => state.monsters.Demon1.health);
-    const healthMonster2 = useGameStore((state) => state.monsters.Alien1.health);
-    const healthMonster3 = useGameStore((state) => state.monsters.Demon2.health);
-    const healthMonster4 = useGameStore((state) => state.monsters.Alien2.health);
-    const healthMonster5 = useGameStore((state) => state.monsters.Demon3.health);
-    const healthMonster6 = useGameStore((state) => state.monsters.Alien3.health);
-
+    const healthMonster1 = useMonsterStore((state) => state.monsters.Demon1.health);
+    const healthMonster2 = useMonsterStore((state) => state.monsters.Alien1.health);
+    // const healthMonster3 = useGameStore((state) => state.monsters.Demon2.health);
+    // const healthMonster4 = useGameStore((state) => state.monsters.Alien2.health);
+    // const healthMonster5 = useGameStore((state) => state.monsters.Demon3.health);
+    // const healthMonster6 = useGameStore((state) => state.monsters.Alien3.health);
+    // console.log(healthMonster1, healthMonster2)
     const onFire = (bullet) => {
         setBullets((bullets) => [...bullets, bullet])
     }

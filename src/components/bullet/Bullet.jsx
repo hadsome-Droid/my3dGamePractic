@@ -3,41 +3,75 @@ import {RigidBody, vec3} from "@react-three/rapier";
 import {MeshBasicMaterial} from "three";
 import {WEAPON_OFFSET} from "../character/CharacterController.jsx";
 import * as THREE from "three";
+import {useSkillStore} from "../../stores/skillStore.js";
 
 const BULLET_SPEED = 13;
 
-const bulletMaterial = new MeshBasicMaterial({
-    // color: "hotpink",
-    // color: "lime",
-    // color: "lightskyblue",
-    // color: "aquamarine",
-    // color: "greenyellow",
-    // color: "mediumpurple",
-    color: "orangered",
-    // color: "orange",
-    // color: "fuchsia",
-    // color: "aqua",
-    // color: "tomato",
-    // color: "chocolate",
-    // color: "slateblue",
-    // color: "dodgerblue",
-    // color: "gold",
-    // color: "goldenrod",
-    // color: "silver",
-    // color: "crimson",
 
-    toneMapped: false,
-});
+// const bulletMaterial = () => {
+//     const skillSelected = useSkillStore((state) => state.skillSelected)
+//
+//     console.log(skillSelected);
+//     const materialBullet = new MeshBasicMaterial({
+//         // color: "hotpink",
+//         // color: "lime",
+//         // color: "lightskyblue",
+//         // color: "aquamarine",
+//         // color: "greenyellow",
+//         // color: "mediumpurple",
+//         color: skillSelected === 'Fireball' ? "orangered" : 'lightskyblue',
+//         // color: "orange",
+//         // color: "fuchsia",
+//         // color: "aqua",
+//         // color: "tomato",
+//         // color: "chocolate",
+//         // color: "slateblue",
+//         // color: "dodgerblue",
+//         // color: "gold",
+//         // color: "goldenrod",
+//         // color: "silver",
+//         // color: "crimson",
+//
+//         toneMapped: false,
+//     });
+//     materialBullet.color.multiplyScalar(42);
+//     return materialBullet
+// }
 
-bulletMaterial.color.multiplyScalar(42);
 
 export const Bullet = ({position, rotation, onHit}) => {
     const rigidBody = useRef();
     const [isVisible, setIsVisible] = useState(true);
     const [gravity, setGravity] = useState(0);
     const [touch, setTouch] = useState(0);
+    const skillSelected = useSkillStore((state) => state.skillSelected)
 
 
+    const materialBullet = new MeshBasicMaterial({
+        // color: "hotpink",
+        // color: "lime",
+        // color: "lightskyblue",
+        // color: "aquamarine",
+        // color: "greenyellow",
+        // color: "mediumpurple",
+        color: skillSelected === 'Fireball' ? "orangered" : 'lightskyblue',
+        // color: "orange",
+        // color: "fuchsia",
+        // color: "aqua",
+        // color: "tomato",
+        // color: "chocolate",
+        // color: "slateblue",
+        // color: "dodgerblue",
+        // color: "gold",
+        // color: "goldenrod",
+        // color: "silver",
+        // color: "crimson",
+
+        toneMapped: false,
+    });
+    materialBullet.color.multiplyScalar(42);
+
+    console.log(skillSelected);
     useEffect(() => {
         const direction = new THREE.Vector3(0, 0, 1);
         direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
@@ -76,6 +110,16 @@ export const Bullet = ({position, rotation, onHit}) => {
         setIsVisible(false); // Удаляем компонент из DOM
     }
 
+    const ballGeometry = () => {
+        if (skillSelected === 'Fireball') {
+            return <sphereGeometry args={[0.08, 32, 16]}/>
+        }
+
+        if (skillSelected === 'Snowball') {
+            return <coneGeometry args={[0.03, 0.6, 7]}/>
+        }
+    }
+
     // Применяем смещение к позиции пули
     // const bulletPosition = new THREE.Vector3(position.x, position.y + 1.5, position.z)
     //     .add(new THREE.Vector3(WEAPON_OFFSET.x, 0, WEAPON_OFFSET.z));
@@ -97,11 +141,13 @@ export const Bullet = ({position, rotation, onHit}) => {
                         damage: 25,
                     }}
                 >
-                    <mesh position-z={0.45} material={bulletMaterial} castShadow rotation-x={Math.PI / 2}>
+                    <mesh position-z={0.45} material={materialBullet} castShadow
+                          rotation-x={Math.PI / 2}>
+                        {ballGeometry()}
                         {/*<boxGeometry args={[0.05, 0.05, 0.5]}/>*/}
                         {/*<sphereGeometry args={[0.08, 32, 16]}/>*/}
                         {/*<torusGeometry args={[0.1, 0.02, 12, 48]}/>*/}
-                        <coneGeometry args={[0.05, 0.3, 7]}/>
+                        {/*<coneGeometry args={[0.05, 0.3, 7]}/>*/}
                     </mesh>
                 </RigidBody>
             </group>

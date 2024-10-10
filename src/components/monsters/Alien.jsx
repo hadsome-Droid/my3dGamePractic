@@ -7,8 +7,9 @@ import React, {useEffect} from 'react'
 import {useGraph} from '@react-three/fiber'
 import {useGLTF, useAnimations} from '@react-three/drei'
 import {SkeletonUtils} from 'three-stdlib'
-import {useGameStore} from "../../store.js";
+// import {useGameStore} from "../../stores/store.js";
 import {LoopOnce} from "three";
+import {useMonsterStore} from "../../stores/monsterStore.js";
 
 export function Alien({monsterId, ...props}) {
     const group = React.useRef()
@@ -16,7 +17,7 @@ export function Alien({monsterId, ...props}) {
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
     const {nodes, materials} = useGraph(clone)
     const {actions} = useAnimations(animations, group)
-    const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation)
+    const monsterAnimation = useMonsterStore((state) => state.monsters[monsterId].monsterAnimation)
 
     if (actions['CharacterArmature|Death']) {
         actions['CharacterArmature|Death'].loop = LoopOnce

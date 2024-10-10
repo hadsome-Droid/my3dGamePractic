@@ -3,7 +3,9 @@ import {CapsuleCollider, RigidBody} from "@react-three/rapier";
 import {Billboard, Text} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
-import {useGameStore} from "../../store.js";
+// import {useGameStore} from "../../stores/store.js";
+import {useMonsterStore} from "../../stores/monsterStore.js";
+import {useCharacterStore} from "../../stores/characterStore.js";
 
 
 export const MonsterController = ({
@@ -20,13 +22,14 @@ export const MonsterController = ({
     const monster = useRef()
     const rigidBodyMonster = useRef()
     const [direction, setDirection] = useState(targetDir); // Направление движения
-    const updateMonsterHealth = useGameStore((state) => state.updateMonsterHealth);
-    const setMonsterAnimation = useGameStore((state) => state.setMonsterAnimation);
-    const monsterAnimation = useGameStore((state) => state.monsters[monsterId].monsterAnimation);
-    const updateMonsterSpeed = useGameStore((state) => state.updateMonsterSpeed);
-    const monsterSpeed = useGameStore((state) => state.monsters[monsterId].speed); //скорость движения
-    // const playerPosition = useGameStore((state) => state.playerPosition); // Получаем позицию персонажа
-    const playerPosition = false; // Получаем позицию персонажа
+    const { updateMonsterHealth, setMonsterAnimation, updateMonsterSpeed} = useMonsterStore()
+    // const updateMonsterHealth = useGameStore((state) => state.updateMonsterHealth);
+    // const setMonsterAnimation = useGameStore((state) => state.setMonsterAnimation);
+    const monsterAnimation = useMonsterStore((state) => state.monsters[monsterId].monsterAnimation);
+    // const updateMonsterSpeed = useGameStore((state) => state.updateMonsterSpeed);
+    const monsterSpeed = useMonsterStore((state) => state.monsters[monsterId].speed); //скорость движения
+    const playerPosition = useCharacterStore((state) => state.playerPosition); // Получаем позицию персонажа
+    // const playerPosition = false; // Получаем позицию персонажа
     // console.log(playerPosition)
     const randomNumber = parseFloat((Math.random() * (0.1 - 0.04) + 0.04).toFixed(2));
 

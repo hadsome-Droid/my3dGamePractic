@@ -22,29 +22,18 @@
 
 .skills {
   display: flex;
-  //justify-content: center;
   gap: 10px;
-  //display: flex;
-  //justify-content: center;
-  //align-items: center;
-  //width: 100%;
 }
 
 .skill {
-  width: 50px;
+  width: 60px;
   height: 55px;
-
-  //padding: 10px;
-  //background: gray;
-  //color: white;
-  //border: none;
-  //cursor: pointer;
-  //transition: background 0.3s ease;
   borderRadius: 5px;
 
 
-  & .skillSelected {
+  &.skillSelected {
     background-color: #1e491f;
+    color: white;
   }
 }
 

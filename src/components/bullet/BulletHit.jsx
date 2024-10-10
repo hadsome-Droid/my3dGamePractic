@@ -2,9 +2,10 @@ import {Instance, Instances} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useEffect, useMemo, useRef} from "react";
 import {Color, MathUtils, Vector3} from "three";
+import {useSkillStore} from "../../stores/skillStore.js";
 
-const bulletHitcolor = new Color("orangered");
-bulletHitcolor.multiplyScalar(12);
+// const bulletHitcolor = new Color("orangered");
+// bulletHitcolor.multiplyScalar(12);
 
 const AnimatedBox = ({scale, target, speed}) => {
     const ref = useRef();
@@ -21,6 +22,11 @@ const AnimatedBox = ({scale, target, speed}) => {
 };
 
 export const BulletHit = ({nb = 100, position, onEnded}) => {
+    const skillSelected = useSkillStore((state) => state.skillSelected)
+    const bulletHitcolor = new Color(skillSelected === 'Fireball' ? "orangered" : 'lightskyblue');
+    bulletHitcolor.multiplyScalar(12);
+
+
     const boxes = useMemo(
         () =>
             Array.from({length: nb}, () => ({

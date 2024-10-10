@@ -1,26 +1,6 @@
-import {create} from "zustand";
-import * as THREE from "three";
+import { create } from "zustand";
 
-export const useGameStore = create((set) => ({
-    //Character Controller
-    characterState: 'Idle',
-    setCharacterState: (characterState) => set({
-        characterState,
-    }),
-    progressAnimation: 0,
-    setProgressAnimation: (progressAnimation) => set({
-        progressAnimation,
-    }),
-    playerPosition: new THREE.Vector3(0, 0, 0),
-    setPlayerPosition: (position) => set({playerPosition: position}),
-    // Characters
-    characters: {
-        player: {
-            health: 100,
-            stamina: 100,
-        },
-    },
-
+export const useMonsterStore = create((set) => ({
     // Monsters
     // run 0.08
     //walk 0.04
@@ -61,9 +41,7 @@ export const useGameStore = create((set) => ({
             stamina: 50,
             speed: 0.04,
         },
-
     },
-
 
     setMonsterAnimation: (monsterId, monsterAnimation) => set((state) => ({
         monsters: {
@@ -75,33 +53,10 @@ export const useGameStore = create((set) => ({
         },
     })),
 
-    // Methods to update character parameters
-    updateCharacterHealth: (characterId, health) =>
-        set((state) => ({
-            characters: {
-                ...state.characters,
-                [characterId]: {
-                    ...state.characters[characterId],
-                    health,
-                },
-            },
-        })),
-
-    updateCharacterStamina: (characterId, stamina) =>
-        set((state) => ({
-            characters: {
-                ...state.characters,
-                [characterId]: {
-                    ...state.characters[characterId],
-                    stamina,
-                },
-            },
-        })),
-
     // Methods to update monster parameters
     updateMonsterHealth: (monsterId, health) =>
         set((state) => {
-            console.log(`Updating monster ${monsterId} health to ${health}`)
+            console.log(`Updating monster ${monsterId} health to ${health}`);
             return {
                 monsters: {
                     ...state.monsters,
@@ -110,7 +65,7 @@ export const useGameStore = create((set) => ({
                         health,
                     },
                 },
-            }
+            };
         }),
 
     updateMonsterStamina: (monsterId, stamina) =>
@@ -123,6 +78,7 @@ export const useGameStore = create((set) => ({
                 },
             },
         })),
+
     updateMonsterSpeed: (monsterId, speed) =>
         set((state) => ({
             monsters: {
@@ -133,7 +89,4 @@ export const useGameStore = create((set) => ({
                 },
             },
         })),
-    isButtonPush: false,
-    updateButtonPush: (isButtonPush) => (set({isButtonPush}))
-}))
-
+}));

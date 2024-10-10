@@ -1,6 +1,6 @@
 import s from './infoPanel.module.scss'
 import {v4 as uuidv4} from 'uuid';
-import {useGameStore} from "../../store.js";
+// import {useGameStore} from "../../stores/store.js";
 import {Html} from "@react-three/drei";
 import {useMemo} from "react";
 
