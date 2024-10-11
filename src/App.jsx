@@ -18,6 +18,8 @@ export const Controls = {
     skill2: "skill2",
     skill3: "skill3",
     skill4: "skill4",
+    skill5: "skill5",
+    skill6: "skill6",
 };
 
 function App() {
@@ -34,6 +36,8 @@ function App() {
             {name: Controls.skill2, keys: ["Digit2"]},
             {name: Controls.skill3, keys: ["Digit3"]},
             {name: Controls.skill4, keys: ["Digit4"]},
+            {name: Controls.skill5, keys: ["Digit5"]},
+            {name: Controls.skill6, keys: ["Digit6"]},
         ],
         []
     );

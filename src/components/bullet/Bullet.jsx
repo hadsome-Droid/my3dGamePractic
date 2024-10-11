@@ -1,12 +1,29 @@
 import {useEffect, useRef, useState} from 'react';
 import {RigidBody, vec3} from "@react-three/rapier";
-import {MeshBasicMaterial} from "three";
+import {Shape, ShapeGeometry, MeshBasicMaterial, Mesh} from "three";
 import {WEAPON_OFFSET} from "../character/CharacterController.jsx";
 import * as THREE from "three";
 import {useSkillStore} from "../../stores/skillStore.js";
 
 const BULLET_SPEED = 13;
 
+// const HeartShape = () => {
+//     const heartShape = new Shape();
+//
+//     heartShape.moveTo(5, 5);
+//     heartShape.bezierCurveTo(5, 5, 4, 0, 0, 0);
+//     heartShape.bezierCurveTo(-6, 0, -6, 7, -6, 7);
+//     heartShape.bezierCurveTo(-6, 11, -3, 15.4, 5, 19);
+//     heartShape.bezierCurveTo(12, 15.4, 16, 11, 16, 7);
+//     heartShape.bezierCurveTo(16, 7, 16, 0, 10, 0);
+//     heartShape.bezierCurveTo(7, 0, 5, 5, 5, 5);
+//
+//     const geometry = new ShapeGeometry(heartShape);
+//     const material = new MeshBasicMaterial({ color: 0x00ff00 });
+//     const mesh = new Mesh(geometry, material);
+//
+//     return <primitive object={mesh} />;
+// };
 
 // const bulletMaterial = () => {
 //     const skillSelected = useSkillStore((state) => state.skillSelected)
@@ -46,6 +63,28 @@ export const Bullet = ({position, rotation, onHit}) => {
     const [touch, setTouch] = useState(0);
     const skillSelected = useSkillStore((state) => state.skillSelected)
 
+    const heartShape = new Shape();
+
+    // heartShape.moveTo(5, 5);
+    heartShape.bezierCurveTo(5, 5, 4, 0, 0, 0);
+    heartShape.bezierCurveTo(-6, 0, -6, 7, -6, 7);
+    heartShape.bezierCurveTo(-6, 11, -3, 15.4, 5, 19);
+    heartShape.bezierCurveTo(12, 15.4, 16, 11, 16, 7);
+    heartShape.bezierCurveTo(16, 7, 16, 0, 10, 0);
+    heartShape.bezierCurveTo(7, 0, 5, 5, 5, 5);
+
+    let color = 'orangered'
+    switch (skillSelected) {
+        case "Fireball":
+            color = 'orangered'
+            break;
+        case "Snowball":
+            color = 'lightskyblue'
+            break;
+        case "Lightningball":
+            color = 'slateblue'
+            break;
+    }
 
     const materialBullet = new MeshBasicMaterial({
         // color: "hotpink",
@@ -54,7 +93,7 @@ export const Bullet = ({position, rotation, onHit}) => {
         // color: "aquamarine",
         // color: "greenyellow",
         // color: "mediumpurple",
-        color: skillSelected === 'Fireball' ? "orangered" : 'lightskyblue',
+        color: color,
         // color: "orange",
         // color: "fuchsia",
         // color: "aqua",
@@ -71,7 +110,6 @@ export const Bullet = ({position, rotation, onHit}) => {
     });
     materialBullet.color.multiplyScalar(42);
 
-    console.log(skillSelected);
     useEffect(() => {
         const direction = new THREE.Vector3(0, 0, 1);
         direction.applyQuaternion(new THREE.Quaternion().setFromEuler(rotation));
@@ -116,7 +154,12 @@ export const Bullet = ({position, rotation, onHit}) => {
         }
 
         if (skillSelected === 'Snowball') {
-            return <coneGeometry args={[0.03, 0.6, 7]}/>
+            return <coneGeometry args={[0.03, 0.5, 3]}/>
+        }
+
+        if (skillSelected === 'Lightningball') {
+
+            return <torusKnotGeometry args={[0.2, 0.01, 19, 5, 9, 4]}/>
         }
     }
 
@@ -142,7 +185,7 @@ export const Bullet = ({position, rotation, onHit}) => {
                     }}
                 >
                     <mesh position-z={0.45} material={materialBullet} castShadow
-                          rotation-x={Math.PI / 2}>
+                          rotation-x={skillSelected === 'Snowball' ? Math.PI / 2 : rotation.x}>
                         {ballGeometry()}
                         {/*<boxGeometry args={[0.05, 0.05, 0.5]}/>*/}
                         {/*<sphereGeometry args={[0.08, 32, 16]}/>*/}

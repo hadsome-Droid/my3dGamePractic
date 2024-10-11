@@ -30,7 +30,7 @@ export const MonsterController = ({
     const monsterSpeed = useMonsterStore((state) => state.monsters[monsterId].speed); //скорость движения
     const playerPosition = useCharacterStore((state) => state.playerPosition); // Получаем позицию персонажа
     // const playerPosition = false; // Получаем позицию персонажа
-    // console.log(playerPosition)
+
     const randomNumber = parseFloat((Math.random() * (0.1 - 0.04) + 0.04).toFixed(2));
 
     // Ограничение области передвижения (круг)
@@ -140,9 +140,9 @@ export const MonsterController = ({
     // Логика для изменения направления при столкновении с другим монстром
     const handleCollision = ({other}) => {
 
-        if (other.rigidBody.userData?.type === "monster") {
-
-        }
+        // if (other.rigidBody.userData?.type === "monster") {
+        //
+        // }
     };
 
     return (

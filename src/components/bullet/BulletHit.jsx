@@ -23,7 +23,20 @@ const AnimatedBox = ({scale, target, speed}) => {
 
 export const BulletHit = ({nb = 100, position, onEnded}) => {
     const skillSelected = useSkillStore((state) => state.skillSelected)
-    const bulletHitcolor = new Color(skillSelected === 'Fireball' ? "orangered" : 'lightskyblue');
+    let color
+    switch (skillSelected) {
+        case "Fireball":
+            color = 'orangered'
+            break;
+        case "Snowball":
+            color = 'lightskyblue'
+            break;
+        case "Lightningball":
+            color = 'slateblue'
+            break;
+    }
+
+    const bulletHitcolor = new Color(color);
     bulletHitcolor.multiplyScalar(12);
 
 
@@ -53,7 +66,8 @@ export const BulletHit = ({nb = 100, position, onEnded}) => {
     return (
         <group position={[position.x, position.y + 1, position.z]}>
             <Instances>
-                <boxGeometry/>
+                {/*<boxGeometry/>*/}
+                <torusKnotGeometry args={[0.3, 0.1, 19, 5, 9, 4]}/>
                 {/*<sphereGeometry/>*/}
                 {/*<torusGeometry/>*/}
                 <meshStandardMaterial toneMapped={false} color={bulletHitcolor}/>

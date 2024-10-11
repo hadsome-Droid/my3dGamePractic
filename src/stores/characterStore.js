@@ -13,7 +13,7 @@ export const useCharacterStore = create((set) => ({
     // Characters
     characters: {
         player: {
-            health: 100,
+            health: 10,
             stamina: 100,
         },
     },

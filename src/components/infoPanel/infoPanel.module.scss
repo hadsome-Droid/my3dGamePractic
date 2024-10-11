@@ -28,12 +28,21 @@
 .skill {
   width: 60px;
   height: 55px;
-  borderRadius: 5px;
+  border-radius: 50%;
+  overflow: hidden;
 
 
   &.skillSelected {
-    background-color: #1e491f;
+    border: 3px solid #8bfd00;
+    //border: 2px solid #fd5b00;
+    background-color: #fd5b00;
     color: white;
+  }
+
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 

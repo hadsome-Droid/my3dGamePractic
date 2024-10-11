@@ -4,7 +4,6 @@ import {useEffect, useRef, useState} from "react";
 import {Controls} from "../../App.jsx";
 import {Billboard, useKeyboardControls, Text} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-// import {useGameStore} from "../../stores/store.js";
 import * as THREE from "three";
 import SkillPanel from "../infoPanel/skillPanel.jsx";
 import {useCharacterStore} from "../../stores/characterStore.js";
@@ -14,7 +13,6 @@ const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
 const MAX_VEL = 3;
 const RUN_VEL = 1.5
-// const RUN_VEL = 3
 const BULLET_SPEED = 80
 const FIRE_RATE = 120;
 const BULLET_COUNT = 10;
@@ -34,6 +32,10 @@ export const CharacterController = ({onFire, ...props}) => {
     const setPlayerPosition = useCharacterStore((state) => state.setPlayerPosition);
     const updateButtonPush = useSkillStore((state) => state.updateButtonPush)
     const updateSkillSelected = useSkillStore((state) => state.updateSkillSelected)
+    const skillSelected = useSkillStore((state) => state.skillSelected)
+    const updateCharacterHealth = useCharacterStore((state) => state.updateCharacterHealth)
+    const health = useCharacterStore((state) => state.characters.player.health)
+
     const lastShoot = useRef(0);
     const lastPositionUpdate = useRef(Date.now());
 
@@ -49,6 +51,8 @@ export const CharacterController = ({onFire, ...props}) => {
     const skill2Pressed = useKeyboardControls((state) => state[Controls.skill2]);
     const skill3Pressed = useKeyboardControls((state) => state[Controls.skill3]);
     const skill4Pressed = useKeyboardControls((state) => state[Controls.skill4]);
+    const skill5Pressed = useKeyboardControls((state) => state[Controls.skill5]);
+    const skill6Pressed = useKeyboardControls((state) => state[Controls.skill6]);
 
     const character = useRef();
     const rigidBody = useRef();
@@ -58,8 +62,10 @@ export const CharacterController = ({onFire, ...props}) => {
     const isRightMouseDown = useRef(false);
     const [movementSpeed, setMovementSpeed] = useState(0.1);
     const [skillId, setSkillId] = useState()
+    const [isSpellcastInProgress, setIsSpellcastInProgress] = useState(false);
 
     const shootInterval = useRef(null);
+    const animationInterval = useRef(null);
 
     const shoot = () => {
         // Get the character's rotation
@@ -73,18 +79,6 @@ export const CharacterController = ({onFire, ...props}) => {
 
         // Set the bullet's velocity based on the direction vector
         const bulletVelocity = direction.multiplyScalar(BULLET_SPEED);
-
-        // if (Date.now() - lastShoot.current > FIRE_RATE) {
-        //     lastShoot.current = Date.now();
-        //     const newBullet = {
-        //         // id: Date.now(),
-        //         position: bulletPosition,
-        //         angle: bulletVelocity,
-        //         rotation: rotation,
-        //     }
-        //     onFire(newBullet);
-        //
-        // }
 
         const newBullet = {
             // id: Date.now(),
@@ -100,7 +94,6 @@ export const CharacterController = ({onFire, ...props}) => {
     useEffect(() => {
 
         if (skill1Pressed) {
-            console.log('++')
             updateButtonPush(1, true)
             updateSkillSelected('Fireball')
 
@@ -112,19 +105,38 @@ export const CharacterController = ({onFire, ...props}) => {
         }
 
         if (skill3Pressed) {
-            console.log('skill3')
             updateButtonPush(3, true)
-            updateSkillSelected('Waterball')
+            updateSkillSelected('Lightningball')
 
         }
 
         if (skill4Pressed) {
-            console.log('skill4')
+            const newHealth = health + 10
             updateButtonPush(4, true)
+            updateSkillSelected('Heal')
+            if (health <= 100) {
+                setIsSpellcastInProgress(true);
+                updateCharacterHealth('player', newHealth)
+                setCharacterState('Spellcast_Raise');
+
+                animationInterval.current = setTimeout(() => {
+                    setCharacterState('Idle')
+                    setIsSpellcastInProgress(false)
+                    clearTimeout(animationInterval.current);
+                }, 2000)
+            }
+        }
+
+        if (skill5Pressed) {
+            updateButtonPush(5, true)
+        }
+
+        if (skill6Pressed) {
+            updateButtonPush(6, true)
         }
 
         const handleMouseDown = (event) => {
-            if (event.button === 0) {
+            if (event.button === 0 && skillSelected !== 'Heal') {
                 // Left mouse button was pressed
                 shoot()
                 isLeftMouseDown.current = true;
@@ -138,7 +150,7 @@ export const CharacterController = ({onFire, ...props}) => {
         };
 
         const handleMouseUp = (event) => {
-            if (event.button === 0) {
+            if (event.button === 0 && skillSelected !== 'Heal') {
                 // Left mouse button was released
                 isLeftMouseDown.current = false;
                 setCharacterState('Idle');
@@ -158,9 +170,23 @@ export const CharacterController = ({onFire, ...props}) => {
             if (shootInterval.current) {
                 clearInterval(shootInterval.current);
             }
+
+            // if (animationInterval.current) {
+            //     clearTimeout(animationInterval.current);
+            // }
         };
-    }, [setCharacterState, skill1Pressed, skill2Pressed, skill3Pressed, skill4Pressed]);
-    // console.log(skill1Pressed)
+    }, [
+        setCharacterState,
+        skill1Pressed,
+        skill2Pressed,
+        skill3Pressed,
+        skill4Pressed,
+        updateSkillSelected,
+        updateButtonPush,
+        skill5Pressed,
+        skill6Pressed,
+    ]);
+
     useFrame((state) => {
 
         const impulse = {x: 0, y: 0, z: 0};
@@ -204,35 +230,17 @@ export const CharacterController = ({onFire, ...props}) => {
             }
         } else {
             // setCharacterState('Idle');
-            if (!isLeftMouseDown.current && isOnFloor.current) {
+            if (!isLeftMouseDown.current && isOnFloor.current && !isSpellcastInProgress) {
                 setCharacterState('Idle');
             }
         }
 
 
-        // if (changeRotation) {
-        //     const angle = Math.atan2(velocity.x, velocity.z);
-        //     character.current.rotation.y = angle;
-        // }
         if (changeRotation) {
             const angle = Math.atan2(linvel.x, linvel.z);
             character.current.rotation.y = angle;
         }
 
-        //Camera Follow
-
-        // const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3());
-        // const characterRotation = character.current.rotation;
-        //
-        // // Calculate camera position behind the character
-        // const cameraOffset = new THREE.Vector3(4, 2, 8);
-        // const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(characterRotation);
-        // cameraOffset.applyMatrix4(rotationMatrix);
-        // state.camera.position.copy(characterWorldPosition).add(cameraOffset);
-        //
-        // // Make the camera look at the character
-        // state.camera.lookAt(cameraOffset);
-        // console.log(cameraOffset)
 
         const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3())
 
@@ -270,7 +278,7 @@ export const CharacterController = ({onFire, ...props}) => {
                 >
                     <SkillPanel skillId={skillId}/>
                     <CapsuleCollider args={[0.7, 0.6]} position={[0, 1.28, 0]}/>
-                    <PlayerInfo/>
+                    <PlayerInfo health={health}/>
                     <group ref={character}>
                         <SkeletonMage/>
                     </group>
@@ -282,8 +290,8 @@ export const CharacterController = ({onFire, ...props}) => {
 };
 
 // полоска ХП
-const PlayerInfo = ({state}) => {
-    const health = 10;
+const PlayerInfo = ({health}) => {
+
     const name = 'Roki';
     return (
         <Billboard position-y={3}>

@@ -19,8 +19,12 @@ const SkillPanel = ({skillId}) => {
                 <ul className={s.skills}>
                     {skills.map((skill) => (
                         // <li key={index}>{skill}</li>
+                        // <button key={skill.id} id={skill.id}
+                        //         className={`${s.skill} ${skill.isButtonPush ? s.skillSelected : ''}`}>{skill.name}</button>
                         <button key={skill.id} id={skill.id}
-                                className={`${s.skill} ${skill.isButtonPush ? s.skillSelected : ''}`}>{skill.name}</button>
+                                className={`${s.skill} ${skill.isButtonPush ? s.skillSelected : ''}`}>
+                            <img src={skill.skillIcon} alt={skill.name} />
+                        </button>
                     ))}
                 </ul>
             </div>

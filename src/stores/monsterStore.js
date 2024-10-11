@@ -56,7 +56,6 @@ export const useMonsterStore = create((set) => ({
     // Methods to update monster parameters
     updateMonsterHealth: (monsterId, health) =>
         set((state) => {
-            console.log(`Updating monster ${monsterId} health to ${health}`);
             return {
                 monsters: {
                     ...state.monsters,
