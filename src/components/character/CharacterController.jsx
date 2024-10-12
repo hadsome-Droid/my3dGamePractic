@@ -8,6 +8,7 @@ import * as THREE from "three";
 import SkillPanel from "../infoPanel/skillPanel.jsx";
 import {useCharacterStore} from "../../stores/characterStore.js";
 import {useSkillStore} from "../../stores/skillStore.js";
+import {Bubble} from "../bubble/Bubble.jsx";
 
 const JUMP_FORCE = 1;
 const MOVEMENT_SPEED = 0.1;
@@ -57,6 +58,7 @@ export const CharacterController = ({onFire, ...props}) => {
     const character = useRef();
     const rigidBody = useRef();
     const isOnFloor = useRef(true);
+    const characterPosition = useRef(new THREE.Vector3());
 
     const isLeftMouseDown = useRef(false);
     const isRightMouseDown = useRef(false);
@@ -143,7 +145,7 @@ export const CharacterController = ({onFire, ...props}) => {
                 setCharacterState('Spellcast_Shoot');
 
                 // Start shooting interval
-                shootInterval.current = setInterval(shoot, FIRE_RATE);
+                // shootInterval.current = setInterval(shoot, FIRE_RATE);
             }
 
 
@@ -243,6 +245,7 @@ export const CharacterController = ({onFire, ...props}) => {
 
 
         const characterWorldPosition = character.current.getWorldPosition(new THREE.Vector3())
+        characterPosition.current.copy(characterWorldPosition);
 
         state.camera.position.x = characterWorldPosition.x;
         state.camera.position.z = characterWorldPosition.z + 10;
@@ -284,6 +287,7 @@ export const CharacterController = ({onFire, ...props}) => {
                     </group>
                 </RigidBody>
             </group>
+            <Bubble characterPosition={characterPosition.current}/>
             {/*<FloatingPanel />*/}
         </>
     );

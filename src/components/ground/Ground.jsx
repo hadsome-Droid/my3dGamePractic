@@ -5,6 +5,7 @@ import {Cylinder, useTexture} from "@react-three/drei";
 // import floorTexture from "/src/assets/image/floor3.jpg";
 import floorTexture from "/src/assets/image/floor4.jpg";
 import {CylinderCollider, RigidBody} from "@react-three/rapier";
+import {Bubble} from "../bubble/Bubble.jsx";
 // import floorTexture from "/src/assets/image/floor2.webp";
 // import floorTexture from "/src/assets/image/floor5.webp";
 
